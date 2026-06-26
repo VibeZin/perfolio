@@ -1,0 +1,160 @@
+// components/sections/Hero.tsx
+'use client';
+
+import { motion } from 'framer-motion';
+import { ChevronDown, Sparkles } from 'lucide-react';
+import Magnetic from '@/components/animations/Magnetic';
+import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
+
+const LiquidMetal = dynamic(
+  () => import('@paper-design/shaders-react').then((mod) => mod.LiquidMetal),
+  { ssr: false }
+);
+
+const ProfileCard = dynamic(
+  () => import('@/components/ui/ProfileCard'),
+  { ssr: false }
+);
+
+export default function Hero() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [presets, setPresets] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    import('@paper-design/shaders-react').then((mod) => {
+      setPresets(mod.liquidMetalPresets);
+    });
+  }, []);
+
+  const handleScrollTo = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Dynamically calculate colors that match our light/dark themes perfectly
+  // Light Mode uses our warm cream background (#F9F5EE) and a richer luxury gold champagne tint
+  // Dark Mode uses our deep void blue-black background (#06080E) and a luminous steel blue-neon tint
+  const themeBack = mounted && resolvedTheme === 'light' ? '#F5EBE6' : '#06080E';
+  const themeTint = mounted && resolvedTheme === 'light' ? '#D5C4B3' : '#32528C';
+
+  return (
+    <section id="hero" className="relative w-full h-screen min-h-[750px] flex flex-col justify-center items-center pt-28 md:pt-20 overflow-hidden bg-transparent">
+      {/* Liquid Metal Shader Background */}
+      <div 
+        id="hero-canvas-container" 
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden"
+        style={{
+          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)'
+        }}
+      >
+        {presets && (
+          <LiquidMetal
+            {...presets[2]}
+            scale={(presets[2].scale || 1) * 1.75}
+            colorBack={themeBack}
+            colorTint={themeTint}
+            style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+          />
+        )}
+        {/* Soft overlay to seamlessly transition shader colors into website background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void/5 to-void pointer-events-none z-[1]" />
+      </div>
+      {/* Floating subtle grid background to add texture */}
+      <div className="absolute inset-0 pointer-events-none z-1 bg-[linear-gradient(to_right,rgba(var(--accent-rgb),0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--accent-rgb),0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+
+      {/* Hero Content Overlay */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl px-6 md:px-8 pt-20 pb-12 md:pt-16 gap-6 md:gap-7 select-none">
+        {/* Profile Card Patty */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-10 mb-6 md:mt-14 md:mb-8 relative z-10 flex justify-center items-center overflow-visible"
+        >
+          <ProfileCard
+            name=""
+            title=""
+            handle="shabab"
+            status="Offline (Localhost)"
+            contactText="Get in Touch"
+            avatarUrl="/flipper.jpg"
+            showUserInfo={true}
+            enableTilt={true}
+            enableMobileTilt={false}
+            onContactClick={() => handleScrollTo('contact')}
+            behindGlowEnabled={true}
+            behindGlowColor="rgba(var(--accent-rgb), 0.4)"
+            innerGradient="linear-gradient(145deg, rgba(var(--surface-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.1) 100%)"
+          />
+        </motion.div>
+
+        {/* Main Name */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="font-syne tracking-tighter leading-none relative z-20 -mt-16 md:-mt-24 pointer-events-none"
+          style={{ fontSize: 'clamp(48px, 9vw, 110px)' }}
+        >
+          <span className="gradient-text uppercase font-extrabold block">
+            Shabab Ahmed
+          </span>
+        </motion.h1>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="font-dmSans font-normal tracking-tight text-frost text-liquid-pop"
+          style={{ fontSize: 'clamp(18px, 2.5vw, 26px)' }}
+        >
+          I speak to AI. It builds. We ship.
+        </motion.p>
+
+        {/* Sub-tagline */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="font-dmSans font-normal text-frost max-w-[520px] leading-relaxed text-liquid-pop"
+          style={{ fontSize: 'clamp(13px, 1.8vw, 16px)' }}
+        >
+          Turning ideas into real products — one conversation at a time.
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-row gap-4 justify-center items-center mt-4 w-full sm:w-auto"
+        >
+          <Magnetic className="flex-1 sm:flex-initial">
+            <button
+              onClick={() => handleScrollTo('projects')}
+              className="btn-primary w-full text-sm whitespace-nowrap cursor-pointer"
+            >
+              See My Work
+            </button>
+          </Magnetic>
+          <Magnetic className="flex-1 sm:flex-initial">
+            <button
+              onClick={() => handleScrollTo('contact')}
+              className="btn-ghost w-full text-sm whitespace-nowrap cursor-pointer"
+            >
+              Get in Touch
+            </button>
+          </Magnetic>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
