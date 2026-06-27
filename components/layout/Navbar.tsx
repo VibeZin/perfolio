@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 
@@ -313,10 +313,16 @@ export default function Navbar() {
             </div>
 
             {/* Bottom decoration */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
-              <span className="font-dmSans font-normal text-xs text-frost/30 uppercase tracking-[0.2em] block">
-                Social links coming soon
-              </span>
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6">
+              <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+                <Github className="w-6 h-6" />
+              </a>
             </div>
           </motion.div>
         )}

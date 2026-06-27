@@ -46,10 +46,9 @@ export default function Contact() {
   };
 
   const socialIcons = [
-    { icon: Instagram, href: "#", name: "Instagram" },
-    { icon: Facebook, href: "#", name: "Facebook" },
-    { icon: Linkedin, href: "#", name: "Linkedin" },
-    { icon: Github, href: "#", name: "Github" },
+    { icon: Instagram, href: "https://www.instagram.com/shababahmedtzn/", name: "Instagram" },
+    { icon: Facebook, href: "https://www.facebook.com/shababahmedtzn/", name: "Facebook" },
+    { icon: Github, href: "https://github.com/VibeZin", name: "Github" },
   ];
 
   return (
@@ -126,6 +125,8 @@ export default function Contact() {
                 <motion.a
                   key={social.name}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.1 }}
                   className="w-12 h-12 rounded-full border border-border/80 flex items-center justify-center text-frost hover:text-accent hover:border-accent transition-colors duration-300 bg-surface/20"
                 >
@@ -134,9 +135,6 @@ export default function Contact() {
               );
             })}
           </div>
-          <span className="font-dmSans font-normal text-xs text-frost/50 uppercase tracking-widest block">
-            Social links coming soon
-          </span>
         </motion.div>
       </motion.div>
     </section>
