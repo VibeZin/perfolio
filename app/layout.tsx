@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { LineWavesColorProvider } from '@/context/LineWavesColorContext';
 import Navbar from '@/components/layout/Navbar';
 import WebsiteBackground from '@/components/layout/WebsiteBackground';
+import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
 
 const syne = Syne({
@@ -39,11 +40,13 @@ export default function RootLayout({
     >
       <body className="min-h-screen text-ink transition-colors duration-300 font-dmSans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <LineWavesColorProvider>
-            <WebsiteBackground />
-            <Navbar />
-            {children}
-          </LineWavesColorProvider>
+          <SmoothScrollProvider>
+            <LineWavesColorProvider>
+              <WebsiteBackground />
+              <Navbar />
+              {children}
+            </LineWavesColorProvider>
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>
