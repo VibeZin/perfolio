@@ -149,21 +149,9 @@ export default function Navbar() {
         data-scrolled="false"
         className="navbar-pill fixed top-4 md:top-6 left-1/2 z-50 rounded-full border backdrop-blur-md flex items-center justify-between overflow-hidden"
       >
-        {/* Liquid Glass Highlight Sweep */}
+        {/* Liquid Glass Highlight Sweep — CSS only, zero JS overhead */}
         <div className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
-          <motion.div
-            className="w-2/3 h-full bg-gradient-to-r from-transparent via-white/18 to-transparent skew-x-12"
-            animate={{
-              x: ['-150%', '350%'],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              repeatType: 'loop',
-              ease: 'easeInOut',
-              delay: 0.5,
-            }}
-          />
+          <div className="navbar-sweep w-2/3 h-full bg-gradient-to-r from-transparent via-white/18 to-transparent skew-x-12" />
         </div>
         {/* Left Side: Logo */}
         <a

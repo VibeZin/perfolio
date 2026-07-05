@@ -13,27 +13,13 @@ export default function ScrollAnimations() {
     gsap.registerPlugin(ScrollTrigger);
 
     // ─── Lenis ↔ GSAP sync ───────────────────────────────────────────────────
-    // Tell ScrollTrigger to read Lenis's virtual scroll position rather than
-    // window.scrollY so they stay perfectly in sync (no jitter / desync).
+    // Simple integration: tell ScrollTrigger to refresh on every Lenis scroll tick.
+    // We do NOT use scrollerProxy here — that pattern requires Lenis to drive GSAP's
+    // ticker which conflicts with the separate rAF loop in SmoothScrollProvider and
+    // causes micro-stutters from being driven twice per frame.
     const lenis = getLenis();
     if (lenis) {
-      ScrollTrigger.scrollerProxy(document.body, {
-        scrollTop(value?: number) {
-          if (arguments.length && value !== undefined) {
-            lenis.scrollTo(value, { immediate: true });
-          }
-          return lenis.scroll;
-        },
-        getBoundingClientRect() {
-          return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
-        },
-        pinType: 'transform',
-      });
-
-      // Whenever Lenis emits a scroll event, update ScrollTrigger
       lenis.on('scroll', ScrollTrigger.update);
-
-      ScrollTrigger.addEventListener('refresh', () => lenis.resize());
       ScrollTrigger.refresh();
     }
     // ─────────────────────────────────────────────────────────────────────────
@@ -59,7 +45,7 @@ export default function ScrollAnimations() {
         );
       });
 
-      // 2. Section labels (target all elements with .section-label class)
+      // 2. Section labels
       const labels = document.querySelectorAll('.section-label');
       labels.forEach((label) => {
         gsap.fromTo(
@@ -79,20 +65,23 @@ export default function ScrollAnimations() {
         );
       });
 
-      // 3. Background parallax for Hero section shader container
-      const canvasContainer = document.getElementById('hero-canvas-container');
-      const heroSection = document.getElementById('hero');
-      if (canvasContainer && heroSection) {
-        gsap.to(canvasContainer, {
-          yPercent: 30,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: heroSection,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        });
+      // 3. Hero parallax — only on desktop where Lenis is active
+      const isTouchDevice = navigator.maxTouchPoints > 0;
+      if (!isTouchDevice) {
+        const canvasContainer = document.getElementById('hero-canvas-container');
+        const heroSection = document.getElementById('hero');
+        if (canvasContainer && heroSection) {
+          gsap.to(canvasContainer, {
+            yPercent: 30,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: heroSection,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true,
+            },
+          });
+        }
       }
 
       // 4. Projects section background sweep
@@ -109,15 +98,11 @@ export default function ScrollAnimations() {
           },
         });
       }
-
-      // 5. Navbar shrink — scrubbed via CSS data attribute, not padding animation
-      // (Padding animation removed from here; handled by CSS in Navbar)
     });
 
     return () => {
       ctx.revert();
       ScrollTrigger.getAll().forEach((t) => t.kill());
-      // Clean up Lenis listener
       const l = getLenis();
       if (l) l.off('scroll', ScrollTrigger.update);
     };
@@ -125,7 +110,6 @@ export default function ScrollAnimations() {
 
   return (
     <>
-      {/* Dynamic styles to support Projects sweep animation smoothly */}
       <style>{`
         #projects {
           position: relative;

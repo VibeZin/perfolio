@@ -290,18 +290,21 @@ html.lenis, html.lenis body {
 }
 
 /* ─── GPU Compositor Hints ────────────────────────────────────────────────── */
-section {
-  contain: layout style;
-  transform: translateZ(0);
-}
-
-.glow-card {
-  will-change: box-shadow, border-color;
-}
-
+/* Only promote elements that ACTUALLY animate on the compositor */
 .btn-primary,
 .btn-ghost {
-  will-change: transform, box-shadow;
+  will-change: transform;
+}
+
+/* ─── Navbar CSS sweep animation — replaces Framer Motion infinite loop ──── */
+@keyframes navbar-sweep {
+  0%   { transform: translateX(-150%) skewX(12deg); }
+  100% { transform: translateX(350%) skewX(12deg); }
+}
+
+.navbar-sweep {
+  animation: navbar-sweep 5s ease-in-out 0.5s infinite;
+  will-change: transform;
 }
 
 /* ─── Accessibility: Respect prefers-reduced-motion ──────────────────────── */
@@ -321,14 +324,14 @@ section {
   }
 }
 
-/* ─── Mobile: Disable heavy blur effects to prevent GPU stalling ─────────── */
+/* ─── Mobile: Disable heavy GPU effects and running animations ───────────── */
 @media (max-width: 767px) {
   .glass {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(var(--surface-rgb), 0.85);
   }
-  
+
   /* Reduce shadow complexity on mobile */
   .glow-card {
     box-shadow: 0 2px 8px rgba(var(--ink-rgb), 0.06);
@@ -336,6 +339,13 @@ section {
 
   .glow-card:hover {
     box-shadow: 0 4px 16px rgba(var(--ink-rgb), 0.1);
+  }
+
+  /* Stop all running CSS animations on mobile to save GPU */
+  .animate-float,
+  .animate-pulse-glow,
+  .navbar-sweep {
+    animation: none !important;
   }
 }
 
