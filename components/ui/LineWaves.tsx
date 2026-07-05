@@ -165,13 +165,36 @@ export default function LineWaves({
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+
+    // --- Performance: Detect device capabilities ---
+    const isTouchDevice = navigator.maxTouchPoints > 0;
+    const isLowDPI = window.devicePixelRatio <= 1;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // On mobile / low-dpi: reduce line counts to cut GPU load
+    const effectiveInner = isTouchDevice ? Math.floor(innerLineCount * 0.6) : innerLineCount;
+    const effectiveOuter = isTouchDevice ? Math.floor(outerLineCount * 0.6) : outerLineCount;
+    // Disable mouse warp on touch (no cursor + saves per-frame trig math)
+    const effectiveMouse = enableMouseInteraction && !isTouchDevice;
+    // Cap pixel ratio so mobile high-DPI screens don't render 3x pixels
+    const dprCap = isTouchDevice ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.5);
+
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, dpr: dprCap });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
+
+    // If user prefers reduced motion, skip the entire animation setup
+    if (prefersReduced) {
+      return () => {
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      };
+    }
 
     let program: Program;
     let currentMouse = [0.5, 0.5];
     let targetMouse = [0.5, 0.5];
+    let isVisible = !document.hidden;
+    let frameSkip = 0; // For mobile 30fps throttling
 
     function handleMouseMove(e: MouseEvent) {
       const rect = gl.canvas.getBoundingClientRect();
@@ -185,6 +208,11 @@ export default function LineWaves({
       targetMouse = [0.5, 0.5];
     }
 
+    // Pause rendering when the tab is hidden (saves battery and GPU)
+    function handleVisibilityChange() {
+      isVisible = !document.hidden;
+    }
+
     function resize() {
       renderer.setSize(container.offsetWidth, container.offsetHeight);
       if (program) {
@@ -192,6 +220,7 @@ export default function LineWaves({
       }
     }
     window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     resize();
 
@@ -204,8 +233,8 @@ export default function LineWaves({
         uTime: { value: 0 },
         uResolution: { value: [gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height] },
         uSpeed: { value: speed },
-        uInnerLines: { value: innerLineCount },
-        uOuterLines: { value: outerLineCount },
+        uInnerLines: { value: effectiveInner },
+        uOuterLines: { value: effectiveOuter },
         uWarpIntensity: { value: warpIntensity },
         uRotation: { value: rotationRad },
         uEdgeFadeWidth: { value: edgeFadeWidth },
@@ -216,14 +245,14 @@ export default function LineWaves({
         uColor3: { value: hexToVec3(color3) },
         uMouse: { value: new Float32Array([0.5, 0.5]) },
         uMouseInfluence: { value: mouseInfluence },
-        uEnableMouse: { value: enableMouseInteraction }
+        uEnableMouse: { value: effectiveMouse }
       }
     });
 
     const mesh = new Mesh(gl, { geometry, program });
     container.appendChild(gl.canvas);
 
-    if (enableMouseInteraction) {
+    if (effectiveMouse) {
       window.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseleave', handleMouseLeave);
     }
@@ -232,9 +261,19 @@ export default function LineWaves({
 
     function update(time: number) {
       animationFrameId = requestAnimationFrame(update);
+
+      // Skip frames on touch devices to target ~30fps (halves GPU load)
+      if (isTouchDevice) {
+        frameSkip = (frameSkip + 1) % 2;
+        if (frameSkip !== 0) return;
+      }
+
+      // Skip rendering when tab is hidden
+      if (!isVisible) return;
+
       program.uniforms.uTime.value = time * 0.001;
 
-      if (enableMouseInteraction) {
+      if (effectiveMouse) {
         currentMouse[0] += 0.05 * (targetMouse[0] - currentMouse[0]);
         currentMouse[1] += 0.05 * (targetMouse[1] - currentMouse[1]);
         program.uniforms.uMouse.value[0] = currentMouse[0];
@@ -251,7 +290,8 @@ export default function LineWaves({
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
-      if (enableMouseInteraction) {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (effectiveMouse) {
         window.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseleave', handleMouseLeave);
       }
@@ -262,5 +302,5 @@ export default function LineWaves({
     };
   }, [speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence]);
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  return <div ref={containerRef} className="w-full h-full" style={{ willChange: 'transform' }} />;
 }

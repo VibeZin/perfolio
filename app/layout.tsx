@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Syne, DM_Sans } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { LineWavesColorProvider } from '@/context/LineWavesColorContext';
-import Navbar from '@/components/layout/Navbar';
+
 import WebsiteBackground from '@/components/layout/WebsiteBackground';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
@@ -43,7 +43,6 @@ export default function RootLayout({
           <SmoothScrollProvider>
             <LineWavesColorProvider>
               <WebsiteBackground />
-              <Navbar />
               {children}
             </LineWavesColorProvider>
           </SmoothScrollProvider>

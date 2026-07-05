@@ -17,16 +17,18 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Reduced from 2000ms to 800ms — was an arbitrary stall that also delayed
+    // whileInView animations from initializing. 800ms is enough for fonts + initial paint.
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="relative w-full min-h-screen bg-transparent text-ink overflow-x-hidden">
-      {/* ScrollTrigger Initializer */}
+      {/* ScrollTrigger + Lenis sync initializer — renders nothing, effect only */}
       <ScrollAnimations />
 
       {/* Page Loading Screen */}
@@ -35,19 +37,19 @@ export default function Home() {
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
-            exit={{ 
-              opacity: 0, 
+            exit={{
+              opacity: 0,
               y: -20,
-              transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } 
+              transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
             }}
             className="fixed inset-0 z-[100] bg-void flex flex-col items-center justify-center select-none"
           >
             <div className="flex flex-col items-center gap-6">
               {/* Logo */}
-              <motion.span 
+              <motion.span
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
                 className="font-syne font-extrabold text-[60px] gradient-text tracking-wider leading-none"
               >
                 SA
@@ -55,11 +57,10 @@ export default function Home() {
 
               {/* Progress Bar Container */}
               <div className="w-48 h-[2px] bg-border/20 rounded-full overflow-hidden relative">
-                {/* Real interactive progress bar animation */}
-                <motion.div 
+                <motion.div
                   initial={{ width: '0%' }}
                   animate={{ width: '100%' }}
-                  transition={{ duration: 1.8, ease: 'easeInOut' }}
+                  transition={{ duration: 0.7, ease: 'easeInOut' }}
                   className="h-full bg-accent rounded-full shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]"
                 />
               </div>
@@ -68,41 +69,40 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Main Layout */}
-      {!isLoading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Floating Navigation Menu */}
-          <Navbar />
+      {/* Main Layout — rendered immediately but hidden behind loader */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isLoading ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+        aria-hidden={isLoading}
+      >
+        {/* Floating Navigation Menu */}
+        <Navbar />
 
-          {/* Section 1: Hero */}
-          <Hero />
+        {/* Section 1: Hero */}
+        <Hero />
 
-          {/* Wrapper for the rest of the contents */}
-          <main className="flex flex-col relative z-10 w-full">
-            {/* Section 2: About */}
-            <About />
+        {/* Wrapper for the rest of the contents */}
+        <main className="flex flex-col relative z-10 w-full">
+          {/* Section 2: About */}
+          <About />
 
-            {/* Section 3: Projects */}
-            <Projects />
+          {/* Section 3: Projects */}
+          <Projects />
 
-            {/* Section 4: Education */}
-            <Education />
+          {/* Section 4: Education */}
+          <Education />
 
-            {/* Section 5: Skills */}
-            <Skills />
+          {/* Section 5: Skills */}
+          <Skills />
 
-            {/* Section 6: Contact */}
-            <Contact />
+          {/* Section 6: Contact */}
+          <Contact />
 
-            {/* Footer */}
-            <Footer />
-          </main>
-        </motion.div>
-      )}
+          {/* Footer */}
+          <Footer />
+        </main>
+      </motion.div>
     </div>
   );
 }

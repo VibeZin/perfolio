@@ -1,25 +1,15 @@
 // components/layout/Navbar.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, X, Instagram, Facebook, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const triggerHapticFeedback = () => {
     if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
@@ -27,18 +17,29 @@ export default function Navbar() {
     }
   };
 
+  // ─── Scroll shrink via CSS data-attribute ─────────────────────────────────
+  // Instead of running Framer Motion tween every scroll event (which triggers
+  // a React re-render + new animation), we flip a data-attribute on the <nav>
+  // and let CSS transitions handle the visual change — zero JS overhead.
   useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    let ticking = false;
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrolled = window.scrollY > 50;
+        nav.setAttribute('data-scrolled', String(scrolled));
+        ticking = false;
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Intersection Observer to highlight active sections on scroll
   useEffect(() => {
@@ -137,43 +138,16 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
+      {/*
+       * CSS-driven navbar shrink — no JS animation, no re-renders.
+       * data-scrolled="true"  → compact pill styles via CSS
+       * data-scrolled="false" → expanded pill styles via CSS
+       */}
+      <nav
+        ref={navRef}
         id="main-navbar"
-        initial={false}
-        animate={{
-          x: '-50%',
-          width: isMobile 
-            ? (scrolled ? 'calc(100% - 2.5rem)' : 'calc(100% - 2rem)') 
-            : (scrolled ? '560px' : '720px'),
-          paddingTop: isMobile
-            ? (scrolled ? '6px' : '10px')
-            : (scrolled ? '8px' : '14px'),
-          paddingBottom: isMobile
-            ? (scrolled ? '6px' : '10px')
-            : (scrolled ? '8px' : '14px'),
-          paddingLeft: isMobile
-            ? (scrolled ? '14px' : '20px')
-            : (scrolled ? '20px' : '28px'),
-          paddingRight: isMobile
-            ? (scrolled ? '14px' : '20px')
-            : (scrolled ? '20px' : '28px'),
-          backgroundColor: scrolled
-            ? 'rgba(var(--surface-rgb), 0.75)'
-            : 'rgba(var(--surface-rgb), 0.25)',
-          borderColor: scrolled
-            ? 'var(--border)'
-            : 'rgba(var(--border-rgb), 0.4)',
-          boxShadow: scrolled
-            ? '0 12px 30px -10px rgba(var(--ink-rgb), 0.08), inset 0 1px 2px rgba(var(--surface-rgb), 0.25), 0 0 20px var(--glow)'
-            : '0 4px 12px rgba(var(--ink-rgb), 0.02), inset 0 1px 1px rgba(var(--surface-rgb), 0.1)',
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 160,
-          damping: 22,
-          mass: 0.9,
-        }}
-        className="fixed top-4 md:top-6 left-1/2 z-50 rounded-full border backdrop-blur-md flex items-center justify-between overflow-hidden"
+        data-scrolled="false"
+        className="navbar-pill fixed top-4 md:top-6 left-1/2 z-50 rounded-full border backdrop-blur-md flex items-center justify-between overflow-hidden"
       >
         {/* Liquid Glass Highlight Sweep */}
         <div className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
@@ -244,7 +218,7 @@ export default function Navbar() {
             <Menu className="w-6 h-6" />
           </button>
         </div>
-      </motion.nav>
+      </nav>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -330,4 +304,3 @@ export default function Navbar() {
     </>
   );
 }
-

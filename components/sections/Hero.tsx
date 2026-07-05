@@ -97,11 +97,11 @@ export default function Hero() {
 
         {/* Main Name */}
         <motion.h1
-          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="font-syne tracking-tighter leading-none relative z-20 -mt-16 md:-mt-24 pointer-events-none"
-          style={{ fontSize: 'clamp(48px, 9vw, 110px)' }}
+          style={{ fontSize: 'clamp(48px, 9vw, 110px)', willChange: 'transform, opacity' }}
         >
           <span className="gradient-text uppercase font-extrabold block">
             Shabab Ahmed

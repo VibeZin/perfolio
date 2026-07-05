@@ -4,13 +4,39 @@
 import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getLenis } from '@/components/providers/SmoothScrollProvider';
 
 export default function ScrollAnimations() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Register ScrollTrigger plugin safely
     gsap.registerPlugin(ScrollTrigger);
+
+    // ─── Lenis ↔ GSAP sync ───────────────────────────────────────────────────
+    // Tell ScrollTrigger to read Lenis's virtual scroll position rather than
+    // window.scrollY so they stay perfectly in sync (no jitter / desync).
+    const lenis = getLenis();
+    if (lenis) {
+      ScrollTrigger.scrollerProxy(document.body, {
+        scrollTop(value?: number) {
+          if (arguments.length && value !== undefined) {
+            lenis.scrollTo(value, { immediate: true });
+          }
+          return lenis.scroll;
+        },
+        getBoundingClientRect() {
+          return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+        },
+        pinType: 'transform',
+      });
+
+      // Whenever Lenis emits a scroll event, update ScrollTrigger
+      lenis.on('scroll', ScrollTrigger.update);
+
+      ScrollTrigger.addEventListener('refresh', () => lenis.resize());
+      ScrollTrigger.refresh();
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     const ctx = gsap.context(() => {
       // 1. Section headings (target all h2 elements inside sections)
@@ -53,7 +79,7 @@ export default function ScrollAnimations() {
         );
       });
 
-      // 3. Background parallax for Hero section Three.js canvas
+      // 3. Background parallax for Hero section shader container
       const canvasContainer = document.getElementById('hero-canvas-container');
       const heroSection = document.getElementById('hero');
       if (canvasContainer && heroSection) {
@@ -84,28 +110,16 @@ export default function ScrollAnimations() {
         });
       }
 
-      // 5. Navbar shrink & subtle scale sticky behavior
-      const navbar = document.getElementById('main-navbar');
-      if (navbar && heroSection) {
-        gsap.to(navbar, {
-          paddingTop: '7px',
-          paddingBottom: '7px',
-          scale: 0.98,
-          ease: 'power1.out',
-          scrollTrigger: {
-            trigger: heroSection,
-            start: '100 top',
-            end: '250 top',
-            scrub: true,
-          },
-        });
-      }
+      // 5. Navbar shrink — scrubbed via CSS data attribute, not padding animation
+      // (Padding animation removed from here; handled by CSS in Navbar)
     });
 
-    // Clean up GSAP context and ScrollTrigger instances on unmount
     return () => {
       ctx.revert();
       ScrollTrigger.getAll().forEach((t) => t.kill());
+      // Clean up Lenis listener
+      const l = getLenis();
+      if (l) l.off('scroll', ScrollTrigger.update);
     };
   }, []);
 

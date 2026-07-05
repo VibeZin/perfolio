@@ -1,7 +1,7 @@
 // components/sections/Projects.tsx
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Play } from 'lucide-react';
 import SpotlightCard from '../ui/SpotlightCard';
@@ -91,30 +91,36 @@ function ProjectCard({ project }: { project: Project }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const rafPending = useRef(false);
+  const rectCache = useRef<DOMRect | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    
-    // Calculate mouse position relative to the center of the card
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    
-    // Normalize and limit to max 8 degrees rotation
-    const rotateY = (x / (rect.width / 2)) * 8;
-    const rotateX = -(y / (rect.height / 2)) * 8;
-    
-    setRotation({ x: rotateX, y: rotateY });
-  };
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || rafPending.current) return;
+    rafPending.current = true;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+    requestAnimationFrame(() => {
+      rafPending.current = false;
+      if (!cardRef.current) return;
+      if (!rectCache.current) rectCache.current = cardRef.current.getBoundingClientRect();
+      const rect = rectCache.current;
+      const x = clientX - rect.left - rect.width / 2;
+      const y = clientY - rect.top - rect.height / 2;
+      const rotateY = (x / (rect.width / 2)) * 8;
+      const rotateX = -(y / (rect.height / 2)) * 8;
+      setRotation({ x: rotateX, y: rotateY });
+    });
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     setRotation({ x: 0, y: 0 });
-  };
+  }, []);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
+    rectCache.current = null; // refresh on enter
     setIsHovered(true);
-  };
+  }, []);
 
   return (
     <div
@@ -122,9 +128,10 @@ function ProjectCard({ project }: { project: Project }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="rounded-[28px] h-[240px] relative transition-all duration-300 ease-out select-none cursor-default"
+      className="project-card-perspective rounded-[28px] h-[240px] relative transition-all duration-300 ease-out select-none cursor-default"
       style={{
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        willChange: 'transform',
       }}
     >
       <SpotlightCard
