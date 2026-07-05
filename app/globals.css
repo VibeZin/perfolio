@@ -289,6 +289,19 @@ html.lenis, html.lenis body {
   box-shadow: 0 12px 30px -10px rgba(var(--ink-rgb), 0.08), inset 0 1px 2px rgba(var(--surface-rgb), 0.25), 0 0 20px var(--glow);
 }
 
+/* backdrop-filter only on desktop — on mobile it triggers full-page compositing every scroll frame */
+.navbar-blur {
+  background-color: rgba(var(--surface-rgb), 0.85);
+}
+
+@media (min-width: 768px) {
+  .navbar-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: transparent;
+  }
+}
+
 /* ─── GPU Compositor Hints ────────────────────────────────────────────────── */
 /* Only promote elements that ACTUALLY animate on the compositor */
 .btn-primary,

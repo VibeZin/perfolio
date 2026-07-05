@@ -147,7 +147,7 @@ export default function Navbar() {
         ref={navRef}
         id="main-navbar"
         data-scrolled="false"
-        className="navbar-pill fixed top-4 md:top-6 left-1/2 z-50 rounded-full border backdrop-blur-md flex items-center justify-between overflow-hidden"
+        className="navbar-pill fixed top-4 md:top-6 left-1/2 z-50 rounded-full border flex items-center justify-between overflow-hidden navbar-blur"
       >
         {/* Liquid Glass Highlight Sweep — CSS only, zero JS overhead */}
         <div className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
@@ -216,20 +216,20 @@ export default function Navbar() {
             animate="visible"
             exit="hidden"
             variants={menuVariants}
-            className="fixed inset-0 z-[100] bg-void/98 backdrop-blur-2xl flex flex-col justify-center items-center p-6 overflow-hidden select-none"
+            className="fixed inset-0 z-[100] bg-void/98 flex flex-col justify-center items-center p-6 overflow-hidden select-none"
             onClick={() => {
               triggerHapticFeedback();
               setMobileMenuOpen(false);
             }}
           >
-            {/* Visual background ambient details */}
+            {/* Visual background ambient details — box-shadow, not filter:blur */}
             <div
-              className="absolute -top-10 -right-10 w-80 h-80 rounded-full filter blur-[100px] opacity-[0.05] pointer-events-none"
-              style={{ backgroundColor: 'var(--accent)' }}
+              className="absolute -top-10 -right-10 w-80 h-80 rounded-full pointer-events-none opacity-[0.06]"
+              style={{ boxShadow: '0 0 160px 80px var(--accent)' }}
             />
             <div
-              className="absolute -bottom-10 -left-10 w-80 h-80 rounded-full filter blur-[100px] opacity-[0.03] pointer-events-none"
-              style={{ backgroundColor: 'var(--gold)' }}
+              className="absolute -bottom-10 -left-10 w-80 h-80 rounded-full pointer-events-none opacity-[0.04]"
+              style={{ boxShadow: '0 0 160px 80px var(--gold)' }}
             />
 
             {/* Close Button */}

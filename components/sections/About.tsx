@@ -19,14 +19,11 @@ export default function About() {
     'Geopolitics',
   ];
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+      transition: { duration: 0.5 },
     },
   };
 
@@ -35,7 +32,7 @@ export default function About() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any },
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as any },
     },
   };
 
@@ -44,7 +41,7 @@ export default function About() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any },
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as any },
     },
   };
 
@@ -55,19 +52,6 @@ export default function About() {
       y: 0,
       transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any },
     },
-  };
-
-  const chipVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.6 + i * 0.05,
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1] as any,
-      },
-    }),
   };
 
   return (
@@ -118,16 +102,13 @@ export default function About() {
                 Obsessions & Focus Areas
               </span>
               <div className="flex flex-wrap gap-2.5">
-                {interests.map((interest, idx) => (
-                  <motion.span
+                {interests.map((interest) => (
+                  <span
                     key={interest}
-                    custom={idx}
-                    variants={chipVariants}
-                    whileHover={{ scale: 1.05 }}
-                    className="font-dmSans font-medium text-xs py-2 px-4 rounded-full border border-border bg-surface/30 text-frost hover:text-ink hover:border-accent transition-colors duration-300 hover:shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)] cursor-default select-none"
+                    className="font-dmSans font-medium text-xs py-2 px-4 rounded-full border border-border bg-surface/30 text-frost hover:text-ink hover:border-accent transition-colors duration-300 cursor-default select-none"
                   >
                     {interest}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
             </div>

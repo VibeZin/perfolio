@@ -56,10 +56,10 @@ export default function Contact() {
       id="contact"
       className="py-[120px] px-6 max-w-[1100px] mx-auto w-full relative z-10 scroll-mt-24 select-none flex items-center justify-center"
     >
-      {/* Blurred background glow */}
+      {/* Ambient glow — box-shadow instead of filter:blur to avoid raster upload */}
       <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full filter blur-[80px] opacity-[0.08] pointer-events-none"
-        style={{ backgroundColor: 'var(--accent)' }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-[0.12] pointer-events-none"
+        style={{ boxShadow: '0 0 120px 60px rgba(var(--accent-rgb), 0.15)' }}
       />
 
       <motion.div
