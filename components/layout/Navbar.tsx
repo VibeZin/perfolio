@@ -222,9 +222,14 @@ export default function Navbar() {
           id="navbar-logo"
           href="#"
           onClick={handleLogoClick}
-          className="font-syne font-extrabold text-lg gradient-text select-none cursor-pointer"
+          className="relative flex items-center justify-center select-none cursor-pointer group py-0.5"
+          aria-label="Home"
         >
-          SA
+          <img
+            src="/logo.png"
+            alt="Shabab Ahmed"
+            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_12px_rgba(255,255,255,0.18)]"
+          />
         </a>
 
         {/* Center: Desktop Nav Links */}

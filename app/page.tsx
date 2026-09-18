@@ -46,14 +46,18 @@ export default function Home() {
           >
             <div className="flex flex-col items-center gap-6">
               {/* Logo */}
-              <motion.span
-                initial={{ opacity: 0, scale: 0.9 }}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="font-syne font-extrabold text-[60px] gradient-text tracking-wider leading-none"
+                className="relative flex items-center justify-center"
               >
-                SA
-              </motion.span>
+                <img
+                  src="/logo.png"
+                  alt="Shabab Ahmed Logo"
+                  className="w-32 sm:w-36 h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                />
+              </motion.div>
 
               {/* Progress Bar Container */}
               <div className="w-48 h-[2px] bg-border/20 rounded-full overflow-hidden relative">

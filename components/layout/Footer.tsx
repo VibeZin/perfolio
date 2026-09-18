@@ -17,10 +17,12 @@ export default function Footer() {
       <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8 md:gap-4 text-center md:text-left">
         
         {/* Left Column: Logo & Name */}
-        <div className="flex flex-col gap-1">
-          <span className="font-syne font-bold text-2xl gradient-text tracking-wider">
-            SA
-          </span>
+        <div className="flex flex-col gap-2 items-center md:items-start">
+          <img
+            src="/logo.png"
+            alt="Shabab Ahmed"
+            className="h-8 w-auto object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]"
+          />
           <span className="font-dmSans font-medium text-sm text-frost">
             Shabab Ahmed
           </span>
