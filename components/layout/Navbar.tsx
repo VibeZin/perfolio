@@ -4,17 +4,48 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X, Instagram, Facebook, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOrigin, setMenuOrigin] = useState({ x: 350, y: 40 });
   const [activeSection, setActiveSection] = useState<string>('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const triggerHapticFeedback = () => {
     if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
       window.navigator.vibrate(15);
     }
+  };
+
+  const handleOpenMenu = () => {
+    if (menuButtonRef.current) {
+      const rect = menuButtonRef.current.getBoundingClientRect();
+      setMenuOrigin({
+        x: Math.round(rect.left + rect.width / 2),
+        y: Math.round(rect.top + rect.height / 2),
+      });
+    } else if (typeof window !== 'undefined') {
+      setMenuOrigin({
+        x: window.innerWidth - 44,
+        y: 40,
+      });
+    }
+    triggerHapticFeedback();
+    setMobileMenuOpen(true);
+  };
+
+  const handleCloseMenu = () => {
+    triggerHapticFeedback();
+    setMobileMenuOpen(false);
   };
 
   // ─── Scroll shrink via CSS data-attribute ─────────────────────────────────
@@ -106,38 +137,59 @@ export default function Navbar() {
     }
   }, [mobileMenuOpen]);
 
-  // Framer Motion Variants for Mobile Menu Overlay — ultra-clean GPU transforms (no skew/rotate jitter)
-  const menuVariants: any = {
+  const bgSolid = mounted && resolvedTheme === 'light' ? '#F5EBE6' : '#06080E';
+
+  // Android 15/16 Material Motion style circular bubble expansion & collapse
+  const bubbleVariants: any = {
     hidden: {
+      clipPath: `circle(0px at ${menuOrigin.x}px ${menuOrigin.y}px)`,
       opacity: 0,
-      scale: 0.98,
       transition: {
-        duration: 0.2,
-        ease: [0.16, 1, 0.3, 1],
+        duration: 0.38,
+        ease: [0.32, 0.72, 0, 1], // snappy fluid shrink back into button
       },
     },
     visible: {
+      clipPath: `circle(150vmax at ${menuOrigin.x}px ${menuOrigin.y}px)`,
       opacity: 1,
-      scale: 1,
       transition: {
-        duration: 0.25,
-        ease: [0.16, 1, 0.3, 1],
-        staggerChildren: 0.04,
-        delayChildren: 0.04,
+        duration: 0.52,
+        ease: [0.16, 1, 0.3, 1], // organic fluid bloom expansion
+      },
+    },
+  };
+
+  const linkContainerVariants: any = {
+    hidden: {
+      transition: {
+        staggerChildren: 0.03,
+        staggerDirection: -1,
+      },
+    },
+    visible: {
+      transition: {
+        delayChildren: 0.16, // wait for bubble to bloom across viewport
+        staggerChildren: 0.05,
       },
     },
   };
 
   const linkVariants: any = {
     hidden: {
-      y: 12,
+      y: 18,
       opacity: 0,
+      scale: 0.95,
+      transition: {
+        duration: 0.2,
+        ease: 'easeIn',
+      },
     },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.25,
+        duration: 0.32,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -197,18 +249,16 @@ export default function Navbar() {
         </div>
 
         {/* Right Side: Toggle & Hamburger */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
 
-          {/* Hamburger Menu Icon */}
+          {/* Hamburger Menu Icon — fully functional on mobile and desktop */}
           <button
             id="mobile-menu-toggle"
-            onClick={() => {
-              triggerHapticFeedback();
-              setMobileMenuOpen(true);
-            }}
+            ref={menuButtonRef}
+            onClick={handleOpenMenu}
             style={{ touchAction: 'manipulation' }}
-            className="md:hidden flex items-center justify-center w-10 h-10 -mr-1.5 text-frost hover:text-ink cursor-pointer active:scale-95 transition-transform"
+            className="flex items-center justify-center w-10 h-10 -mr-1.5 text-frost hover:text-ink cursor-pointer active:scale-95 transition-transform"
             aria-label="Open navigation menu"
           >
             <Menu className="w-6 h-6" />
@@ -216,30 +266,38 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Bubble Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial="hidden"
             animate="visible"
             exit="hidden"
-            variants={menuVariants}
+            variants={bubbleVariants}
             style={{
-              backgroundColor: 'var(--void)',
+              backgroundColor: bgSolid,
               touchAction: 'none',
+              willChange: 'clip-path',
             }}
-            className="fixed inset-0 z-[100] flex flex-col justify-center items-center p-6 overflow-hidden select-none backdrop-blur-2xl"
-            onClick={() => {
-              triggerHapticFeedback();
-              setMobileMenuOpen(false);
-            }}
+            className="fixed inset-0 z-[100] flex flex-col justify-center items-center p-6 overflow-hidden select-none"
+            onClick={handleCloseMenu}
           >
+            {/* 100% Solid Opaque Base Layer — guarantees NO transparency / NO home page bleed */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundColor: bgSolid,
+                zIndex: -2,
+              }}
+            />
+
             {/* Ambient luxury radial glow — high performance pure gradients, zero filter/box-shadow cost */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(var(--accent-rgb), 0.14) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 50% 85%, rgba(var(--gold-rgb), 0.08) 0%, transparent 60%)',
+                  'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 50% 85%, rgba(var(--gold-rgb), 0.08) 0%, transparent 60%)',
+                zIndex: -1,
               }}
             />
 
@@ -248,19 +306,19 @@ export default function Navbar() {
               id="mobile-menu-close"
               onClick={(e) => {
                 e.stopPropagation();
-                triggerHapticFeedback();
-                setMobileMenuOpen(false);
+                handleCloseMenu();
               }}
               style={{ touchAction: 'manipulation' }}
-              className="absolute top-6 right-6 p-2.5 text-frost hover:text-ink cursor-pointer rounded-full border border-border bg-surface/30 active:scale-95 transition-transform"
+              className="absolute top-6 right-6 sm:top-8 sm:right-8 p-3 text-frost hover:text-ink cursor-pointer rounded-full border border-border/80 bg-surface/30 active:scale-90 transition-transform shadow-lg"
               aria-label="Close navigation menu"
             >
               <X className="w-6 h-6" />
             </button>
 
-            {/* Centered Mobile Links */}
-            <div
-              className="flex flex-col gap-6 text-center w-full max-w-xs"
+            {/* Centered Navigation Links with Staggered Cascading Reveal */}
+            <motion.div
+              variants={linkContainerVariants}
+              className="flex flex-col gap-5 sm:gap-6 text-center w-full max-w-xs"
               onClick={(e) => e.stopPropagation()}
             >
               {navLinks.map((link) => {
@@ -270,34 +328,39 @@ export default function Navbar() {
                     <a
                       href={`#${link.id}`}
                       onClick={(e) => handleLinkClick(e, link.id)}
-                      className={`font-syne font-bold text-3xl tracking-tight block py-3.5 px-6 rounded-2xl transition-all duration-300 relative ${
+                      className={`font-syne font-bold text-3xl sm:text-4xl tracking-tight block py-3.5 px-6 rounded-2xl transition-all duration-200 relative ${
                         isActive
-                          ? 'text-accent bg-accent/5 border border-accent/20'
-                          : 'text-frost hover:text-ink border border-transparent hover:bg-surface/5'
+                          ? 'text-accent bg-accent/10 border border-accent/25 shadow-[0_0_20px_rgba(var(--accent-rgb),0.15)]'
+                          : 'text-frost hover:text-ink border border-transparent hover:bg-surface/10'
                       }`}
                     >
                       {link.label}
                       {isActive && (
-                        <div className="absolute right-6 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent animate-pulse" />
+                        <div className="absolute right-6 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
                       )}
                     </a>
                   </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
 
             {/* Bottom decoration */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6">
-              <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22, duration: 0.3 }}
+              className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6"
+            >
+              <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+              <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
                 <Facebook className="w-6 h-6" />
               </a>
-              <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-300">
+              <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
                 <Github className="w-6 h-6" />
               </a>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
