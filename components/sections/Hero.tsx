@@ -3,6 +3,8 @@
 
 import { motion } from 'framer-motion';
 import Magnetic from '@/components/animations/Magnetic';
+import GlassSurface from '@/components/ui/GlassSurface';
+import { ArrowUpRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import { useState, useEffect, useRef } from 'react';
@@ -172,7 +174,7 @@ export default function Hero() {
           <Magnetic className="flex-1 sm:flex-initial">
             <button
               onClick={() => handleScrollTo('projects')}
-              className="btn-primary w-full text-sm whitespace-nowrap cursor-pointer"
+              className="btn-primary w-full text-sm whitespace-nowrap cursor-pointer h-12 px-7 shadow-[0_4px_20px_rgba(var(--accent-rgb),0.25)]"
             >
               See My Work
             </button>
@@ -180,9 +182,37 @@ export default function Hero() {
           <Magnetic className="flex-1 sm:flex-initial">
             <button
               onClick={() => handleScrollTo('contact')}
-              className="btn-ghost w-full text-sm whitespace-nowrap cursor-pointer"
+              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
+              aria-label="Get in Touch"
             >
-              Get in Touch
+              <GlassSurface
+                displace={1}
+                distortionScale={-150}
+                redOffset={19}
+                greenOffset={-1}
+                blueOffset={5}
+                brightness={60}
+                opacity={0.8}
+                mixBlendMode="screen"
+                borderRadius={9999}
+                className="warm-breathe-glow px-6 py-2.5 h-12 min-w-[160px] transition-all duration-300 group-hover:scale-[1.02]"
+              >
+                <div className="flex items-center justify-center gap-2.5">
+                  {/* Precise warm light breathing beacon */}
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500 shadow-[0_0_8px_#F59E0B]" />
+                  </span>
+
+                  {/* Button text with precision typography */}
+                  <span className="font-dmSans font-medium text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
+                    Get in Touch
+                  </span>
+
+                  {/* Precision warm micro-arrow */}
+                  <ArrowUpRight className="w-3.5 h-3.5 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
+                </div>
+              </GlassSurface>
             </button>
           </Magnetic>
         </motion.div>
