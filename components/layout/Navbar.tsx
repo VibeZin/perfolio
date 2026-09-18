@@ -18,6 +18,13 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
+    if (menuButtonRef.current) {
+      const rect = menuButtonRef.current.getBoundingClientRect();
+      setMenuOrigin({
+        x: Math.round(rect.left + rect.width / 2),
+        y: Math.round(rect.top + rect.height / 2),
+      });
+    }
   }, []);
 
   const triggerHapticFeedback = () => {
@@ -139,48 +146,24 @@ export default function Navbar() {
 
   const bgSolid = mounted && resolvedTheme === 'light' ? '#F5EBE6' : '#06080E';
 
-  // Android 15/16 Material Motion style circular bubble expansion & collapse
-  const bubbleVariants: any = {
-    hidden: {
-      clipPath: `circle(0px at ${menuOrigin.x}px ${menuOrigin.y}px)`,
-      opacity: 0,
-      transition: {
-        duration: 0.38,
-        ease: [0.32, 0.72, 0, 1], // snappy fluid shrink back into button
-      },
-    },
+  const linkContainerVariants: any = {
+    hidden: { opacity: 0 },
     visible: {
-      clipPath: `circle(150vmax at ${menuOrigin.x}px ${menuOrigin.y}px)`,
       opacity: 1,
       transition: {
-        duration: 0.52,
-        ease: [0.16, 1, 0.3, 1], // organic fluid bloom expansion
-      },
-    },
-  };
-
-  const linkContainerVariants: any = {
-    hidden: {
-      transition: {
-        staggerChildren: 0.03,
-        staggerDirection: -1,
-      },
-    },
-    visible: {
-      transition: {
-        delayChildren: 0.16, // wait for bubble to bloom across viewport
-        staggerChildren: 0.05,
+        staggerChildren: 0.04,
+        delayChildren: 0.12,
       },
     },
   };
 
   const linkVariants: any = {
     hidden: {
-      y: 18,
+      y: 16,
       opacity: 0,
       scale: 0.95,
       transition: {
-        duration: 0.2,
+        duration: 0.18,
         ease: 'easeIn',
       },
     },
@@ -189,7 +172,7 @@ export default function Navbar() {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.32,
+        duration: 0.28,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -266,100 +249,132 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Bubble Overlay */}
+      {/* Mobile Menu Bubble Overlay — 100% GPU Compositor Scaled Circle */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            variants={bubbleVariants}
-            style={{
-              backgroundColor: bgSolid,
-              touchAction: 'none',
-              willChange: 'clip-path',
-            }}
-            className="fixed inset-0 z-[100] flex flex-col justify-center items-center p-6 overflow-hidden select-none"
-            onClick={handleCloseMenu}
+            key="mobile-nav-portal"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 1, transition: { delay: 0.38, duration: 0.02 } }}
+            className="fixed inset-0 z-[100] overflow-hidden select-none"
+            style={{ touchAction: 'none' }}
           >
-            {/* 100% Solid Opaque Base Layer — guarantees NO transparency / NO home page bleed */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundColor: bgSolid,
-                zIndex: -2,
-              }}
-            />
-
-            {/* Ambient luxury radial glow — high performance pure gradients, zero filter/box-shadow cost */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 50% 85%, rgba(var(--gold-rgb), 0.08) 0%, transparent 60%)',
-                zIndex: -1,
-              }}
-            />
-
-            {/* Close Button */}
-            <button
-              id="mobile-menu-close"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCloseMenu();
-              }}
-              style={{ touchAction: 'manipulation' }}
-              className="absolute top-6 right-6 sm:top-8 sm:right-8 p-3 text-frost hover:text-ink cursor-pointer rounded-full border border-border/80 bg-surface/30 active:scale-90 transition-transform shadow-lg"
-              aria-label="Close navigation menu"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {/* Centered Navigation Links with Staggered Cascading Reveal */}
+            {/* 1. Fluid Expanding Bubble from Button Center — 100% GPU Compositor (Scale) */}
             <motion.div
-              variants={linkContainerVariants}
-              className="flex flex-col gap-5 sm:gap-6 text-center w-full max-w-xs"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{
+                duration: 0.42,
+                ease: [0.16, 1, 0.3, 1], // Android Material 15/16 fluid expansion curve
+              }}
+              style={{
+                position: 'absolute',
+                left: `${menuOrigin.x}px`,
+                top: `${menuOrigin.y}px`,
+                width: '320vmax',
+                height: '320vmax',
+                x: '-50%',
+                y: '-50%',
+                borderRadius: '9999px',
+                backgroundColor: bgSolid,
+                willChange: 'transform',
+                transformOrigin: 'center center',
+              }}
             >
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.id;
-                return (
-                  <motion.div key={link.id} variants={linkVariants}>
-                    <a
-                      href={`#${link.id}`}
-                      onClick={(e) => handleLinkClick(e, link.id)}
-                      className={`font-syne font-bold text-3xl sm:text-4xl tracking-tight block py-3.5 px-6 rounded-2xl transition-all duration-200 relative ${
-                        isActive
-                          ? 'text-accent bg-accent/10 border border-accent/25 shadow-[0_0_20px_rgba(var(--accent-rgb),0.15)]'
-                          : 'text-frost hover:text-ink border border-transparent hover:bg-surface/10'
-                      }`}
-                    >
-                      {link.label}
-                      {isActive && (
-                        <div className="absolute right-6 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
-                      )}
-                    </a>
-                  </motion.div>
-                );
-              })}
+              {/* 100% Solid Opaque Backing Layer — GUARANTEES zero homepage bleed */}
+              <div
+                className="w-full h-full rounded-full"
+                style={{
+                  backgroundColor: bgSolid,
+                }}
+              />
+              {/* Subtle ambient luxury radial glow inside the bubble */}
+              <div
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.16) 0%, transparent 60%)',
+                }}
+              />
             </motion.div>
 
-            {/* Bottom decoration */}
+            {/* 2. Menu Content (Links, Close Button, Socials) */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.22, duration: 0.3 }}
-              className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.15 } }}
+              transition={{
+                duration: 0.22,
+                delay: 0.12, // bloom first, then links cascade in
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative z-10 w-full h-full flex flex-col justify-center items-center p-6"
+              onClick={handleCloseMenu}
             >
-              <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                <Instagram className="w-6 h-6" />
-              </a>
-              <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                <Github className="w-6 h-6" />
-              </a>
+              {/* Close Button */}
+              <button
+                id="mobile-menu-close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCloseMenu();
+                }}
+                style={{ touchAction: 'manipulation' }}
+                className="absolute top-6 right-6 sm:top-8 sm:right-8 p-3 text-frost hover:text-ink cursor-pointer rounded-full border border-border/80 bg-surface/30 active:scale-90 transition-transform shadow-lg"
+                aria-label="Close navigation menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Centered Navigation Links with Staggered Cascading Reveal */}
+              <motion.div
+                variants={linkContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-5 sm:gap-6 text-center w-full max-w-xs"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {navLinks.map((link) => {
+                  const isActive = activeSection === link.id;
+                  return (
+                    <motion.div key={link.id} variants={linkVariants}>
+                      <a
+                        href={`#${link.id}`}
+                        onClick={(e) => handleLinkClick(e, link.id)}
+                        className={`font-syne font-bold text-3xl sm:text-4xl tracking-tight block py-3.5 px-6 rounded-2xl transition-all duration-200 relative ${
+                          isActive
+                            ? 'text-accent bg-accent/10 border border-accent/25 shadow-[0_0_20px_rgba(var(--accent-rgb),0.15)]'
+                            : 'text-frost hover:text-ink border border-transparent hover:bg-surface/10'
+                        }`}
+                      >
+                        {link.label}
+                        {isActive && (
+                          <div className="absolute right-6 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
+                        )}
+                      </a>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Bottom decoration */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.22, duration: 0.3 }}
+                className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6"
+              >
+                <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
+                  <Github className="w-6 h-6" />
+                </a>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
