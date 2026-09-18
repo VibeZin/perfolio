@@ -103,8 +103,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     setMounted(true);
     const isWebkit = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     const isFirefox = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
-    const isTouch = typeof navigator !== 'undefined' && (navigator.maxTouchPoints > 0 || window.innerWidth < 768);
-    setSvgSupported(!isWebkit && !isFirefox && !isTouch);
+    setSvgSupported(!isWebkit && !isFirefox);
   }, []);
 
   const isDarkMode = true;
@@ -168,8 +167,6 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     if (!node) return;
     containerRef.current = node;
 
-    if (!svgSupported) return;
-
     requestAnimationFrame(() => {
       updateDisplacementMap();
       updateChannels();
@@ -182,7 +179,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       resizeObserver.observe(node);
       return () => resizeObserver.disconnect();
     }
-  }, [svgSupported, updateDisplacementMap, updateChannels]);
+  }, [updateDisplacementMap, updateChannels]);
 
   // Re-sync SVG filter when distortion/offset props change after mount
   const prevPropsRef = useRef({ distortionScale, redOffset, greenOffset, blueOffset, displace });
