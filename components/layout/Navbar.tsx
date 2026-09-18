@@ -14,6 +14,7 @@ export default function Navbar() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuOrigin, setMenuOrigin] = useState({ x: 350, y: 40 });
+  const [bubbleScale, setBubbleScale] = useState(65);
   const [activeSection, setActiveSection] = useState<string>('');
 
   useEffect(() => {
@@ -34,18 +35,26 @@ export default function Navbar() {
   };
 
   const handleOpenMenu = () => {
+    let x = typeof window !== 'undefined' ? window.innerWidth - 44 : 350;
+    let y = 40;
     if (menuButtonRef.current) {
       const rect = menuButtonRef.current.getBoundingClientRect();
-      setMenuOrigin({
-        x: Math.round(rect.left + rect.width / 2),
-        y: Math.round(rect.top + rect.height / 2),
-      });
-    } else if (typeof window !== 'undefined') {
-      setMenuOrigin({
-        x: window.innerWidth - 44,
-        y: 40,
-      });
+      x = Math.round(rect.left + rect.width / 2);
+      y = Math.round(rect.top + rect.height / 2);
     }
+    setMenuOrigin({ x, y });
+
+    // Calculate exact scale factor needed to cover the entire screen from (x, y)
+    if (typeof window !== 'undefined') {
+      const maxCornerDist = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+      // Base circle radius is 28px (diameter 56px). Add 12% safety margin to ensure full coverage
+      const targetScale = Math.ceil((maxCornerDist / 28) * 1.12);
+      setBubbleScale(targetScale);
+    }
+
     triggerHapticFeedback();
     setMobileMenuOpen(true);
   };
@@ -130,16 +139,26 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  // Prevent background scrolling when mobile menu is open
+  // Dispatch event when mobile menu opens/closes so background WebGL shaders pause,
+  // and lock background scrolling without desktop layout shift
   useEffect(() => {
     if (mobileMenuOpen) {
+      window.dispatchEvent(new CustomEvent('portfolio:menu-toggle', { detail: { open: true } }));
       const originalOverflow = document.body.style.overflow;
       const originalTouchAction = document.body.style.touchAction;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const originalPaddingRight = document.body.style.paddingRight;
+
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
       return () => {
+        window.dispatchEvent(new CustomEvent('portfolio:menu-toggle', { detail: { open: false } }));
         document.body.style.overflow = originalOverflow;
         document.body.style.touchAction = originalTouchAction;
+        document.body.style.paddingRight = originalPaddingRight;
       };
     }
   }, [mobileMenuOpen]);
@@ -151,19 +170,26 @@ export default function Navbar() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.04,
-        delayChildren: 0.12,
+        staggerChildren: 0.035,
+        delayChildren: 0.08,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 0.12,
+        ease: 'easeOut',
       },
     },
   };
 
   const linkVariants: any = {
     hidden: {
-      y: 16,
+      y: 12,
       opacity: 0,
-      scale: 0.95,
+      scale: 0.96,
       transition: {
-        duration: 0.18,
+        duration: 0.15,
         ease: 'easeIn',
       },
     },
@@ -172,7 +198,7 @@ export default function Navbar() {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.28,
+        duration: 0.24,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -249,73 +275,77 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Bubble Overlay — 100% GPU Compositor Scaled Circle */}
+      {/* Mobile Menu Bubble Overlay — Ultra-Fast Compositor Scaled 56px Circle */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             key="mobile-nav-portal"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 1, transition: { delay: 0.38, duration: 0.02 } }}
+            exit={{ opacity: 1, transition: { delay: 0.31, duration: 0.01 } }}
             className="fixed inset-0 z-[100] overflow-hidden select-none"
             style={{ touchAction: 'none' }}
           >
-            {/* 1. Fluid Expanding Bubble from Button Center — 100% GPU Compositor (Scale) */}
+            {/* 1. Fluid Expanding Bubble from Button Center — Featherlight 56px Base GPU Element */}
             <motion.div
               initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
+              animate={{ scale: bubbleScale }}
+              exit={{
+                scale: 0,
+                transition: {
+                  duration: 0.30,
+                  ease: [0.32, 0, 0.67, 0], // Material 3 Emphasized Accelerate into button
+                },
+              }}
               transition={{
-                duration: 0.42,
-                ease: [0.16, 1, 0.3, 1], // Android Material 15/16 fluid expansion curve
+                duration: 0.38,
+                ease: [0.22, 1, 0.36, 1], // Material 3 Emphasized Decelerate (snappy touch response + fluid glide)
               }}
               style={{
-                position: 'absolute',
-                left: `${menuOrigin.x}px`,
-                top: `${menuOrigin.y}px`,
-                width: '320vmax',
-                height: '320vmax',
-                x: '-50%',
-                y: '-50%',
-                borderRadius: '9999px',
+                position: 'fixed',
+                left: menuOrigin.x - 28,
+                top: menuOrigin.y - 28,
+                width: 56,
+                height: 56,
+                borderRadius: '50%',
                 backgroundColor: bgSolid,
                 willChange: 'transform',
-                transformOrigin: 'center center',
+                transformOrigin: '28px 28px',
+                pointerEvents: 'none',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
               }}
-            >
-              {/* 100% Solid Opaque Backing Layer — GUARANTEES zero homepage bleed */}
-              <div
-                className="w-full h-full rounded-full"
-                style={{
-                  backgroundColor: bgSolid,
-                }}
-              />
-              {/* Subtle ambient luxury radial glow inside the bubble */}
-              <div
-                className="absolute inset-0 rounded-full pointer-events-none"
-                style={{
-                  background:
-                    'radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.16) 0%, transparent 60%)',
-                }}
-              />
-            </motion.div>
+            />
 
-            {/* 2. Menu Content (Links, Close Button, Socials) */}
+            {/* 2. Static Ambient Luxury Gradient — Fades in smoothly with zero GPU scale load */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.15 } }}
-              transition={{
-                duration: 0.22,
-                delay: 0.12, // bloom first, then links cascade in
-                ease: [0.16, 1, 0.3, 1],
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.12 } }}
+              transition={{ duration: 0.28, delay: 0.08 }}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(ellipse at 50% 45%, rgba(var(--accent-rgb), 0.15) 0%, transparent 68%)',
               }}
+            />
+
+            {/* 3. Menu Content (Links, Close Button, Socials) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.12 } }}
+              transition={{ duration: 0.18, delay: 0.06 }}
               className="relative z-10 w-full h-full flex flex-col justify-center items-center p-6"
               onClick={handleCloseMenu}
             >
               {/* Close Button */}
-              <button
+              <motion.button
                 id="mobile-menu-close"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.18, delay: 0.06 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCloseMenu();
@@ -325,13 +355,14 @@ export default function Navbar() {
                 aria-label="Close navigation menu"
               >
                 <X className="w-6 h-6" />
-              </button>
+              </motion.button>
 
               {/* Centered Navigation Links with Staggered Cascading Reveal */}
               <motion.div
                 variants={linkContainerVariants}
                 initial="hidden"
                 animate="visible"
+                exit="exit"
                 className="flex flex-col gap-5 sm:gap-6 text-center w-full max-w-xs"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -360,9 +391,10 @@ export default function Navbar() {
 
               {/* Bottom decoration */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.22, duration: 0.3 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ delay: 0.18, duration: 0.22 }}
                 className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6"
               >
                 <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">

@@ -194,7 +194,23 @@ export default function LineWaves({
     let currentMouse = [0.5, 0.5];
     let targetMouse = [0.5, 0.5];
     let isVisible = !document.hidden;
+    let inViewport = true;
+    let menuOpen = false;
     let frameSkip = 0; // For mobile 30fps throttling
+
+    const viewportObserver = new IntersectionObserver(
+      ([entry]) => {
+        inViewport = entry.isIntersecting;
+      },
+      { threshold: 0.01 }
+    );
+    viewportObserver.observe(container);
+
+    const handleMenuToggle = (e: Event) => {
+      const custom = e as CustomEvent<{ open: boolean }>;
+      menuOpen = Boolean(custom.detail?.open);
+    };
+    window.addEventListener('portfolio:menu-toggle', handleMenuToggle);
 
     function handleMouseMove(e: MouseEvent) {
       const rect = gl.canvas.getBoundingClientRect();
@@ -268,8 +284,8 @@ export default function LineWaves({
         if (frameSkip !== 0) return;
       }
 
-      // Skip rendering when tab is hidden
-      if (!isVisible) return;
+      // Skip rendering when tab is hidden, element is out of viewport, or menu is open
+      if (!isVisible || !inViewport || menuOpen) return;
 
       program.uniforms.uTime.value = time * 0.001;
 
@@ -288,6 +304,8 @@ export default function LineWaves({
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
+      viewportObserver.disconnect();
+      window.removeEventListener('portfolio:menu-toggle', handleMenuToggle);
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);

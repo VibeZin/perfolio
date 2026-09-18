@@ -23,6 +23,7 @@ export default function Hero() {
   const [presets, setPresets] = useState<any[] | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [shaderVisible, setShaderVisible] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -34,6 +35,16 @@ export default function Hero() {
     import('@paper-design/shaders-react').then((mod) => {
       setPresets(mod.liquidMetalPresets);
     });
+  }, []);
+
+  // Listen for mobile menu open/close to immediately halt WebGL render loop and free GPU
+  useEffect(() => {
+    const handleMenu = (e: Event) => {
+      const custom = e as CustomEvent<{ open: boolean }>;
+      setIsMenuOpen(Boolean(custom.detail?.open));
+    };
+    window.addEventListener('portfolio:menu-toggle', handleMenu);
+    return () => window.removeEventListener('portfolio:menu-toggle', handleMenu);
   }, []);
 
   // Pause the shader when the Hero section is scrolled out of view
@@ -65,7 +76,7 @@ export default function Hero() {
       id="hero"
       className="relative w-full h-screen min-h-[750px] flex flex-col justify-center items-center pt-28 md:pt-20 overflow-hidden bg-transparent"
     >
-      {/* Liquid Metal Shader — optimized performance on mobile, paused when out of view */}
+      {/* Liquid Metal Shader — optimized performance on mobile, paused when out of view or menu open */}
       <div
         id="hero-canvas-container"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
@@ -77,6 +88,7 @@ export default function Hero() {
             {...(presets[2]?.params || presets[2] || {})}
             shape="none"
             scale={isTouchDevice ? 1.35 : 1.75}
+            speed={isMenuOpen ? 0 : (presets[2]?.params?.speed ?? 0.6)}
             colorBack={themeBack}
             colorTint={themeTint}
             style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
