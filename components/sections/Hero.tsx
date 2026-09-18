@@ -6,7 +6,6 @@ import Magnetic from '@/components/animations/Magnetic';
 import GlassSurface from '@/components/ui/GlassSurface';
 import { ArrowUpRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useTheme } from 'next-themes';
 import { useState, useEffect, useRef } from 'react';
 
 const LiquidMetal = dynamic(
@@ -20,7 +19,6 @@ const ProfileCard = dynamic(
 );
 
 export default function Hero() {
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [presets, setPresets] = useState<any[] | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -69,8 +67,8 @@ export default function Hero() {
     }
   };
 
-  const themeBack = mounted && resolvedTheme === 'light' ? '#F5EBE6' : '#06080E';
-  const themeTint = mounted && resolvedTheme === 'light' ? '#D5C4B3' : '#32528C';
+  const themeBack = '#06080E';
+  const themeTint = '#32528C';
 
   return (
     <section

@@ -35,11 +35,11 @@ export default function RootLayout({
   return (
     <html 
       lang="en" 
-      className={`${syne.variable} ${dmSans.variable} bg-void`}
+      className={`${syne.variable} ${dmSans.variable} bg-void dark`}
       suppressHydrationWarning
     >
       <body className="min-h-screen text-ink transition-colors duration-300 font-dmSans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
           <SmoothScrollProvider>
             <LineWavesColorProvider>
               <WebsiteBackground />

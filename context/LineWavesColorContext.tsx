@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
 
 interface LineWavesColors {
   color1: string;
@@ -21,12 +20,11 @@ export function useLineWavesColors() {
 }
 
 export function LineWavesColorProvider({ children }: { children: React.ReactNode }) {
-  const { resolvedTheme } = useTheme();
   const [colors, setColors] = useState<LineWavesColors>({
-    color1: '#1A365D',
-    color2: '#9A7B2C',
-    color3: '#4F46E5',
-    brightness: 0.10,
+    color1: '#254E91',
+    color2: '#C9A84C',
+    color3: '#6366F1',
+    brightness: 0.12,
   });
 
   useEffect(() => {
@@ -36,16 +34,13 @@ export function LineWavesColorProvider({ children }: { children: React.ReactNode
       return val || fallback;
     };
 
-    const isDark = resolvedTheme === 'dark';
-    const computedBrightness = isDark ? 0.12 : 0.08;
-
     setColors({
-      color1: getCSSVar('--bg-wave-1', isDark ? '#254E91' : '#1A365D'),
-      color2: getCSSVar('--bg-wave-2', isDark ? '#C9A84C' : '#9A7B2C'),
-      color3: getCSSVar('--bg-wave-3', isDark ? '#6366F1' : '#4F46E5'),
-      brightness: computedBrightness,
+      color1: getCSSVar('--bg-wave-1', '#254E91'),
+      color2: getCSSVar('--bg-wave-2', '#C9A84C'),
+      color3: getCSSVar('--bg-wave-3', '#6366F1'),
+      brightness: 0.12,
     });
-  }, [resolvedTheme]);
+  }, []);
 
   return (
     <LineWavesColorContext.Provider value={colors}>

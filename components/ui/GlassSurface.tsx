@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useId, useCallback } from 'react';
-import { useTheme } from 'next-themes';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -100,8 +99,6 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   const blueChannelRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const gaussianBlurRef = useRef<SVGFEGaussianBlurElement | null>(null);
 
-  const { resolvedTheme } = useTheme();
-
   useEffect(() => {
     setMounted(true);
     const isWebkit = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
@@ -109,7 +106,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     setSvgSupported(!isWebkit && !isFirefox);
   }, []);
 
-  const isDarkMode = mounted ? resolvedTheme === 'dark' : true;
+  const isDarkMode = true;
 
   // Builds the SVG data URI that acts as the displacement heightmap
   const generateDisplacementMap = useCallback(() => {

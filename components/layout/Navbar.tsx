@@ -4,11 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X, Instagram, Facebook, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from 'next-themes';
-import ThemeToggle from './ThemeToggle';
-
 export default function Navbar() {
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -163,7 +159,7 @@ export default function Navbar() {
     }
   }, [mobileMenuOpen]);
 
-  const bgSolid = mounted && resolvedTheme === 'light' ? '#F5EBE6' : '#06080E';
+  const bgSolid = '#06080E';
 
   const linkContainerVariants: any = {
     hidden: { opacity: 0 },
@@ -257,9 +253,8 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Right Side: Toggle & Hamburger */}
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
+        {/* Right Side: Hamburger Menu */}
+        <div className="flex items-center">
 
           {/* Hamburger Menu Icon — fully functional on mobile and desktop */}
           <button

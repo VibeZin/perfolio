@@ -4,24 +4,24 @@
 @tailwind utilities;
 
 :root {
-  --void: #F5EBE6;
-  --void-rgb: 245, 235, 230;
-  --abyss: #E8DAD2;
-  --surface: #FCFAF7;
-  --surface-rgb: 252, 250, 247;
-  --ink: #1E2633;
-  --ink-rgb: 30, 38, 51;
-  --frost: #5A6B7C;
-  --accent: #2C4673;
-  --accent-rgb: 44, 70, 115;
-  --gold: #D4AF37;
-  --gold-rgb: 212, 175, 55;
-  --border: #E5D5CD;
-  --border-rgb: 229, 213, 205;
-  --glow: rgba(44, 70, 115, 0.05);
-  --bg-wave-1: #2C4673;
-  --bg-wave-2: #D4AF37;
-  --bg-wave-3: #818CF8;
+  --void: #06080E;
+  --void-rgb: 6, 8, 14;
+  --abyss: #0C1220;
+  --surface: #111B2E;
+  --surface-rgb: 17, 27, 46;
+  --ink: #FAF6ED;
+  --ink-rgb: 250, 246, 237;
+  --frost: #C1D1E6;
+  --accent: #254E91;
+  --accent-rgb: 37, 78, 145;
+  --gold: #C9A84C;
+  --gold-rgb: 201, 168, 76;
+  --border: #1C2D4A;
+  --border-rgb: 28, 45, 74;
+  --glow: rgba(37, 78, 145, 0.25);
+  --bg-wave-1: #254E91;
+  --bg-wave-2: #C9A84C;
+  --bg-wave-3: #6366F1;
 }
 
 .dark {
@@ -73,11 +73,6 @@
   .glass {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    background: rgba(var(--surface-rgb), 0.7);
-    border: 1px solid var(--border);
-  }
-
-  .dark .glass {
     background: rgba(var(--surface-rgb), 0.45);
     border: 1px solid var(--border);
   }
@@ -88,18 +83,10 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 1px 2px rgba(var(--ink-rgb), 0.08));
-  }
-  
-  .dark .gradient-text {
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(0,0,0,0.65));
   }
 
   .text-liquid-pop {
-    text-shadow: none;
-  }
-
-  .dark .text-liquid-pop {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95), 0 0 15px rgba(0, 0, 0, 0.6);
   }
 
