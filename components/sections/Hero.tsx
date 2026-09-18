@@ -6,7 +6,7 @@ import Magnetic from '@/components/animations/Magnetic';
 import GlassSurface from '@/components/ui/GlassSurface';
 import { ArrowUpRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 const LiquidMetal = dynamic(
   () => import('@paper-design/shaders-react').then((mod) => mod.LiquidMetal),
@@ -24,7 +24,6 @@ export default function Hero() {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [shaderVisible, setShaderVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -48,29 +47,7 @@ export default function Hero() {
     return () => window.removeEventListener('portfolio:menu-toggle', handleMenu);
   }, []);
 
-  // Pause WebGL shader during active mobile swiping/scrolling so 100% of GPU/compositor is for smooth scroll
-  useEffect(() => {
-    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const handleScrollOrTouch = () => {
-      setIsScrolling(true);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
-
-    window.addEventListener('scroll', handleScrollOrTouch, { passive: true });
-    window.addEventListener('touchmove', handleScrollOrTouch, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScrollOrTouch);
-      window.removeEventListener('touchmove', handleScrollOrTouch);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-    };
-  }, []);
-
-  // Pause the shader when the Hero section is scrolled out of view
+  // Pause the shader when the Hero section is scrolled completely out of view
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
@@ -93,9 +70,22 @@ export default function Hero() {
   const themeBack = '#06080E';
   const themeTint = '#32528C';
 
-  // Base speed is 0.6; immediately halt rAF (speed=0) when menu open or during mobile scroll/swipe
+  // Base speed is 0.6; always live and animated across all refresh rates (60/90/120 Hz)
   const baseSpeed = presets?.[2]?.params?.speed ?? 0.6;
-  const shaderSpeed = isMenuOpen || (isTouchDevice && isScrolling) ? 0 : baseSpeed;
+  const shaderSpeed = isMenuOpen ? 0 : baseSpeed;
+
+  // Ultra-optimized WebGL context: desynchronized for zero-lock 60/90/120 Hz compositing
+  const webGlAttributes = useMemo<WebGLContextAttributes>(
+    () => ({
+      powerPreference: 'high-performance',
+      alpha: false,
+      depth: false,
+      stencil: false,
+      antialias: false,
+      desynchronized: true,
+    }),
+    []
+  );
 
   return (
     <section
@@ -104,13 +94,13 @@ export default function Hero() {
       className="relative w-full min-h-[100svh] min-h-[820px] sm:min-h-[860px] md:min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-16 md:pt-20 md:pb-12 overflow-x-hidden bg-transparent touch-pan-y"
       style={{ touchAction: 'pan-y' }}
     >
-      {/* Liquid Metal Shader — expanded scale & coverage, paused during scroll on mobile, hardware-composited */}
+      {/* Liquid Metal Shader — always live, high-performance desynchronized WebGL for 60/90/120Hz */}
       <div
         id="hero-canvas-container"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
-        style={{ isolation: 'isolate', transform: 'translateZ(0)', willChange: 'transform' }}
+        style={{ isolation: 'isolate', transform: 'translateZ(0)', willChange: 'transform', contain: 'strict' }}
       >
-        {/* Render on all devices when in viewport, with full-screen fluid shape and mobile-optimized pixel count */}
+        {/* Render on all devices when in viewport with continuous live fluid motion */}
         {presets && shaderVisible && (
           <LiquidMetal
             {...(presets[2]?.params || presets[2] || {})}
@@ -121,7 +111,9 @@ export default function Hero() {
             colorBack={themeBack}
             colorTint={themeTint}
             style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
-            maxPixelCount={isTouchDevice ? 280000 : 1600000}
+            minPixelRatio={1}
+            maxPixelCount={isTouchDevice ? 380000 : 1600000}
+            webGlContextAttributes={webGlAttributes}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-65% to-void/90 pointer-events-none z-[1]" />
