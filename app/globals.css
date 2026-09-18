@@ -279,36 +279,38 @@ html.lenis, html.lenis body {
 .navbar-pill {
   transform: translateX(-50%);
   width: calc(100% - 2rem);
-  padding: 10px 20px;
+  padding: 8px 16px;
   background-color: rgba(var(--surface-rgb), 0.25);
   border-color: rgba(var(--border-rgb), 0.4);
   box-shadow: 0 4px 12px rgba(var(--ink-rgb), 0.02), inset 0 1px 1px rgba(var(--surface-rgb), 0.1);
   transition:
-    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     background-color 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
   will-change: transform; /* already on its own compositor layer due to position:fixed */
 }
 
+.navbar-pill[data-scrolled="true"] {
+  background-color: rgba(var(--surface-rgb), 0.75);
+  border-color: var(--border);
+  box-shadow: 0 12px 30px -10px rgba(var(--ink-rgb), 0.08), inset 0 1px 2px rgba(var(--surface-rgb), 0.25), 0 0 20px var(--glow);
+}
+
 @media (min-width: 768px) {
   .navbar-pill {
     width: 720px;
     padding: 14px 28px;
+    transition:
+      width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
   .navbar-pill[data-scrolled="true"] {
     width: 560px;
     padding: 8px 20px;
   }
-}
-
-.navbar-pill[data-scrolled="true"] {
-  width: calc(100% - 2.5rem);
-  padding: 6px 14px;
-  background-color: rgba(var(--surface-rgb), 0.75);
-  border-color: var(--border);
-  box-shadow: 0 12px 30px -10px rgba(var(--ink-rgb), 0.08), inset 0 1px 2px rgba(var(--surface-rgb), 0.25), 0 0 20px var(--glow);
 }
 
 /* backdrop-filter only on desktop — on mobile it triggers full-page compositing every scroll frame */
@@ -379,8 +381,16 @@ html.lenis, html.lenis body {
   /* Stop all running CSS animations on mobile to save GPU */
   .animate-float,
   .animate-pulse-glow,
-  .navbar-sweep {
+  .navbar-sweep,
+  .warm-breathe-glow {
     animation: none !important;
+  }
+
+  .warm-breathe-glow {
+    box-shadow:
+      0 0 0 1px rgba(245, 158, 11, 0.45),
+      0 0 14px 2px rgba(245, 158, 11, 0.22);
+    border-color: rgba(245, 158, 11, 0.55);
   }
 }
 

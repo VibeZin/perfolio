@@ -208,6 +208,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
 
   const handlePointerMove = useCallback(
     (event: PointerEvent): void => {
+      if (event.pointerType === 'touch') return;
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
       const { x, y } = getOffsets(event, shell);
@@ -218,6 +219,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
 
   const handlePointerEnter = useCallback(
     (event: PointerEvent): void => {
+      if (event.pointerType === 'touch') return;
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
 
@@ -445,8 +447,8 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   return (
     <div
       ref={wrapRef}
-      className={`relative touch-none ${className}`.trim()}
-      style={{ perspective: '500px', transform: 'translate3d(0, 0, 0.1px)', ...cardStyle } as React.CSSProperties}
+      className={`relative touch-pan-y ${className}`.trim()}
+      style={{ perspective: '500px', transform: 'translate3d(0, 0, 0.1px)', touchAction: 'pan-y', ...cardStyle } as React.CSSProperties}
     >
       {behindGlowEnabled && (
         <div
@@ -458,10 +460,11 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
           }}
         />
       )}
-      <div ref={shellRef} className="relative z-[1] group">
+      <div ref={shellRef} className="relative z-[1] group touch-pan-y" style={{ touchAction: 'pan-y' }}>
         <section
-          className="grid relative overflow-hidden"
+          className="grid relative overflow-hidden touch-pan-y"
           style={{
+            touchAction: 'pan-y',
             height: '48svh',
             maxHeight: '360px',
             aspectRatio: '0.72',
