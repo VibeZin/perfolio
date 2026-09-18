@@ -2,8 +2,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Mail, Instagram, Facebook, Linkedin, Github } from 'lucide-react';
+import { Instagram, Facebook, Linkedin, Github, ArrowUpRight } from 'lucide-react';
 import Magnetic from '@/components/animations/Magnetic';
+import GlassSurface from '@/components/ui/GlassSurface';
 
 export default function Contact() {
   const headingText = "Let's build something real.";
@@ -101,18 +102,42 @@ export default function Contact() {
         </motion.p>
 
         {/* Main CTA Mail Button */}
-        <motion.div variants={fadeUpVariants} className="mt-4">
+        <motion.div variants={fadeUpVariants} className="mt-4 flex justify-center">
           <Magnetic>
-            <motion.a
+            <a
               href="mailto:placeholder@gmail.com"
-              whileHover={{ y: -4, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="btn-primary inline-flex items-center justify-center font-syne font-semibold rounded-full select-none"
-              style={{ padding: '16px 40px', fontSize: '18px' }}
+              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97]"
+              aria-label="Send Me a Mail"
             >
-              <Mail className="w-5 h-5 mr-2.5" />
-              Send Me a Mail
-            </motion.a>
+              <GlassSurface
+                displace={1}
+                distortionScale={-150}
+                redOffset={19}
+                greenOffset={-1}
+                blueOffset={5}
+                brightness={60}
+                opacity={0.8}
+                mixBlendMode="screen"
+                borderRadius={9999}
+                className="warm-breathe-glow px-8 py-3.5 h-[56px] min-w-[210px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
+              >
+                <div className="flex items-center justify-center gap-2.5">
+                  {/* Precise warm light breathing beacon */}
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
+                  </span>
+
+                  {/* Button text with precision typography */}
+                  <span className="font-dmSans font-semibold text-base text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
+                    Send Me a Mail
+                  </span>
+
+                  {/* Precision warm micro-arrow */}
+                  <ArrowUpRight className="w-4 h-4 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
+                </div>
+              </GlassSurface>
+            </a>
           </Magnetic>
         </motion.div>
 
