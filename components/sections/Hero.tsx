@@ -175,9 +175,37 @@ export default function Hero() {
           <Magnetic className="flex-1 sm:flex-initial">
             <button
               onClick={() => handleScrollTo('projects')}
-              className="btn-primary w-full sm:w-auto text-sm sm:text-sm font-semibold whitespace-nowrap cursor-pointer h-[52px] sm:h-12 px-6 sm:px-8 shadow-[0_4px_24px_rgba(var(--accent-rgb),0.3)] active:scale-[0.98] transition-all duration-300"
+              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
+              aria-label="See My Work"
             >
-              See My Work
+              <GlassSurface
+                displace={1}
+                distortionScale={-150}
+                redOffset={19}
+                greenOffset={-1}
+                blueOffset={5}
+                brightness={60}
+                opacity={0.8}
+                mixBlendMode="screen"
+                borderRadius={9999}
+                className="warm-breathe-glow px-6 sm:px-7 py-3 h-[52px] sm:h-12 w-full sm:w-auto min-w-[150px] sm:min-w-[165px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
+              >
+                <div className="flex items-center justify-center gap-2.5">
+                  {/* Precise warm light breathing beacon */}
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
+                  </span>
+
+                  {/* Button text with precision typography */}
+                  <span className="font-dmSans font-semibold text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
+                    See My Work
+                  </span>
+
+                  {/* Precision warm micro-arrow */}
+                  <ArrowUpRight className="w-4 h-4 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
+                </div>
+              </GlassSurface>
             </button>
           </Magnetic>
           <Magnetic className="flex-1 sm:flex-initial">
