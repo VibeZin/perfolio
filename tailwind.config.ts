@@ -16,14 +16,14 @@ const config: Config = {
         dmSans: ['var(--font-dm-sans)', 'DM Sans', 'sans-serif'],
       },
       colors: {
-        void: 'var(--void)',
+        void: 'rgb(var(--void-rgb) / <alpha-value>)',
         abyss: 'var(--abyss)',
-        surface: 'var(--surface)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
         accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
         gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
-        ink: 'var(--ink)',
+        ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
         frost: 'var(--frost)',
-        border: 'var(--border)',
+        border: 'rgb(var(--border-rgb) / <alpha-value>)',
       },
       borderRadius: {
         capsule: '9999px',

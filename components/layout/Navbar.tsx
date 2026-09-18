@@ -92,46 +92,53 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  // Framer Motion Variants for Mobile Menu Overlay
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.touchAction = originalTouchAction;
+      };
+    }
+  }, [mobileMenuOpen]);
+
+  // Framer Motion Variants for Mobile Menu Overlay — ultra-clean GPU transforms (no skew/rotate jitter)
   const menuVariants: any = {
     hidden: {
-      x: '100%',
-      skewX: 5,
+      opacity: 0,
+      scale: 0.98,
       transition: {
-        type: 'spring',
-        damping: 30,
-        stiffness: 300,
-        staggerChildren: 0.05,
-        staggerDirection: -1,
+        duration: 0.2,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
     visible: {
-      x: 0,
-      skewX: 0,
+      opacity: 1,
+      scale: 1,
       transition: {
-        type: 'spring',
-        damping: 24,
-        stiffness: 160,
-        staggerChildren: 0.08,
-        delayChildren: 0.1,
+        duration: 0.25,
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.04,
+        delayChildren: 0.04,
       },
     },
   };
 
   const linkVariants: any = {
     hidden: {
-      x: 60,
+      y: 12,
       opacity: 0,
-      rotate: 4,
     },
     visible: {
-      x: 0,
+      y: 0,
       opacity: 1,
-      rotate: 0,
       transition: {
-        type: 'spring',
-        damping: 18,
-        stiffness: 140,
+        duration: 0.25,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
@@ -200,7 +207,8 @@ export default function Navbar() {
               triggerHapticFeedback();
               setMobileMenuOpen(true);
             }}
-            className="md:hidden flex items-center justify-center p-1 text-frost hover:text-ink cursor-pointer active:scale-90 transition-transform"
+            style={{ touchAction: 'manipulation' }}
+            className="md:hidden flex items-center justify-center w-10 h-10 -mr-1.5 text-frost hover:text-ink cursor-pointer active:scale-95 transition-transform"
             aria-label="Open navigation menu"
           >
             <Menu className="w-6 h-6" />
@@ -216,20 +224,23 @@ export default function Navbar() {
             animate="visible"
             exit="hidden"
             variants={menuVariants}
-            className="fixed inset-0 z-[100] bg-void/98 flex flex-col justify-center items-center p-6 overflow-hidden select-none"
+            style={{
+              backgroundColor: 'var(--void)',
+              touchAction: 'none',
+            }}
+            className="fixed inset-0 z-[100] flex flex-col justify-center items-center p-6 overflow-hidden select-none backdrop-blur-2xl"
             onClick={() => {
               triggerHapticFeedback();
               setMobileMenuOpen(false);
             }}
           >
-            {/* Visual background ambient details — box-shadow, not filter:blur */}
+            {/* Ambient luxury radial glow — high performance pure gradients, zero filter/box-shadow cost */}
             <div
-              className="absolute -top-10 -right-10 w-80 h-80 rounded-full pointer-events-none opacity-[0.06]"
-              style={{ boxShadow: '0 0 160px 80px var(--accent)' }}
-            />
-            <div
-              className="absolute -bottom-10 -left-10 w-80 h-80 rounded-full pointer-events-none opacity-[0.04]"
-              style={{ boxShadow: '0 0 160px 80px var(--gold)' }}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(var(--accent-rgb), 0.14) 0%, transparent 70%), radial-gradient(ellipse 70% 40% at 50% 85%, rgba(var(--gold-rgb), 0.08) 0%, transparent 60%)',
+              }}
             />
 
             {/* Close Button */}
@@ -240,7 +251,8 @@ export default function Navbar() {
                 triggerHapticFeedback();
                 setMobileMenuOpen(false);
               }}
-              className="absolute top-8 right-8 p-2.5 text-frost hover:text-ink cursor-pointer rounded-full border border-border/60 bg-surface/10 active:scale-90 transition-transform"
+              style={{ touchAction: 'manipulation' }}
+              className="absolute top-6 right-6 p-2.5 text-frost hover:text-ink cursor-pointer rounded-full border border-border bg-surface/30 active:scale-95 transition-transform"
               aria-label="Close navigation menu"
             >
               <X className="w-6 h-6" />
