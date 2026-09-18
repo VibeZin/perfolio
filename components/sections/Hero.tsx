@@ -30,18 +30,16 @@ export default function Hero() {
     const isTouch = navigator.maxTouchPoints > 0;
     setIsTouchDevice(isTouch);
 
-    // Only load the heavy LiquidMetal shader on non-touch (desktop) devices
-    if (!isTouch) {
-      import('@paper-design/shaders-react').then((mod) => {
-        setPresets(mod.liquidMetalPresets);
-      });
-    }
+    // Load the LiquidMetal shader for all devices
+    import('@paper-design/shaders-react').then((mod) => {
+      setPresets(mod.liquidMetalPresets);
+    });
   }, []);
 
   // Pause the shader when the Hero section is scrolled out of view
   useEffect(() => {
     const hero = heroRef.current;
-    if (!hero || isTouchDevice) return;
+    if (!hero) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => setShaderVisible(entry.isIntersecting),
@@ -49,7 +47,7 @@ export default function Hero() {
     );
     observer.observe(hero);
     return () => observer.disconnect();
-  }, [isTouchDevice]);
+  }, []);
 
   const handleScrollTo = (id: string) => {
     const element = document.getElementById(id);
@@ -67,26 +65,25 @@ export default function Hero() {
       id="hero"
       className="relative w-full h-screen min-h-[750px] flex flex-col justify-center items-center pt-28 md:pt-20 overflow-hidden bg-transparent"
     >
-      {/* Liquid Metal Shader — desktop only, paused when out of view */}
+      {/* Liquid Metal Shader — optimized performance on mobile, paused when out of view */}
       <div
         id="hero-canvas-container"
-        className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden"
-        style={{
-          maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)'
-        }}
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
+        style={{ isolation: 'isolate' }}
       >
-        {/* Only render on desktop and only when in viewport */}
-        {!isTouchDevice && presets && shaderVisible && (
+        {/* Render on all devices when in viewport, with full-screen fluid shape and mobile-adapted pixel count */}
+        {presets && shaderVisible && (
           <LiquidMetal
-            {...presets[2]}
-            scale={(presets[2].scale || 1) * 1.75}
+            {...(presets[2]?.params || presets[2] || {})}
+            shape="none"
+            scale={isTouchDevice ? 1.35 : 1.75}
             colorBack={themeBack}
             colorTint={themeTint}
-            style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+            style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
+            maxPixelCount={isTouchDevice ? 450000 : 1400000}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void/5 to-void pointer-events-none z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-void/90 pointer-events-none z-[1]" />
       </div>
 
       {/* Subtle grid texture */}
