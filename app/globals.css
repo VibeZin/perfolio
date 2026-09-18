@@ -399,3 +399,24 @@ html.lenis, html.lenis body {
   perspective: 1000px;
   transform-style: preserve-3d;
 }
+
+/* ─── Profile Card: Mobile Touch-Through Scrolling ──────────────────────────
+   On touchscreen devices (smartphones/tablets), let all touch gestures pass directly
+   through the image card to the page scroller so swiping scrolls the website instantly.
+   Only the interactive "Get in Touch" button captures tap/click. ─────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  .profile-card-touch-scroll,
+  .profile-card-touch-scroll section,
+  .profile-card-touch-scroll div:not(.profile-card-interactive):not(.profile-card-interactive *),
+  .profile-card-touch-scroll img {
+    pointer-events: none !important;
+    touch-action: pan-y !important;
+    -webkit-user-drag: none !important;
+    -webkit-touch-callout: none !important;
+  }
+  .profile-card-interactive,
+  .profile-card-interactive * {
+    pointer-events: auto !important;
+    touch-action: pan-y !important;
+  }
+}

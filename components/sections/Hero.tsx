@@ -131,13 +131,17 @@ export default function Hero() {
       <div className="absolute inset-0 pointer-events-none z-1 bg-[linear-gradient(to_right,rgba(var(--accent-rgb),0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--accent-rgb),0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
       {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl px-5 sm:px-6 md:px-8 pt-2 pb-6 md:pt-2 md:pb-8 gap-5 sm:gap-6 md:gap-6 select-none">
+      <div
+        className="relative z-10 flex flex-col items-center text-center max-w-4xl px-5 sm:px-6 md:px-8 pt-2 pb-6 md:pt-2 md:pb-8 gap-5 sm:gap-6 md:gap-6 select-none touch-pan-y"
+        style={{ touchAction: 'pan-y' }}
+      >
         {/* Profile Card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-2 mb-1 sm:mt-4 sm:mb-2 md:mt-2 md:mb-2 relative z-10 flex justify-center items-center overflow-visible"
+          className="mt-2 mb-1 sm:mt-4 sm:mb-2 md:mt-2 md:mb-2 relative z-10 flex justify-center items-center overflow-visible touch-pan-y"
+          style={{ touchAction: 'pan-y' }}
         >
           <ProfileCard
             name=""

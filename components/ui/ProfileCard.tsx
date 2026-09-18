@@ -447,7 +447,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   return (
     <div
       ref={wrapRef}
-      className={`relative touch-pan-y ${className}`.trim()}
+      className={`relative touch-pan-y profile-card-touch-scroll ${className}`.trim()}
       style={{ perspective: '500px', transform: 'translate3d(0, 0, 0.1px)', touchAction: 'pan-y', ...cardStyle } as React.CSSProperties}
     >
       {behindGlowEnabled && (
@@ -521,18 +521,24 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
             >
               {avatarUrl && (
                 <img
-                  className="w-full h-full object-cover absolute inset-0 will-change-transform transition-transform duration-[120ms] ease-out"
+                  className="w-full h-full object-cover absolute inset-0 will-change-transform transition-transform duration-[120ms] ease-out select-none pointer-events-none"
                   src={avatarUrl}
                   alt={`${name || 'User'} avatar`}
                   loading="lazy"
+                  draggable={false}
                   style={{
                     transformOrigin: 'center center',
                     transform:
                       'translateX(calc((var(--pointer-from-left) - 0.5) * 8px)) translateY(calc((var(--pointer-from-top) - 0.5) * 8px)) translateZ(0) scale(1.05)',
                     borderRadius: cardRadius,
                     backfaceVisibility: 'hidden',
-                    objectPosition: '44% center'
-                  }}
+                    objectPosition: '44% center',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
+                    pointerEvents: 'none',
+                    touchAction: 'pan-y'
+                  } as React.CSSProperties}
                   onError={e => {
                     const t = e.target as HTMLImageElement;
                     t.style.display = 'none';
@@ -541,7 +547,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
               )}
               {showUserInfo && (
                 <div
-                  className="absolute z-[2] flex items-center justify-between backdrop-blur-[30px] border border-white/10 pointer-events-auto"
+                  className="absolute z-[2] flex items-center justify-between backdrop-blur-[30px] border border-white/10 profile-card-interactive pointer-events-auto"
                   style={
                     {
                       '--ui-inset': '14px',
@@ -551,21 +557,23 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                       right: 'var(--ui-inset)',
                       background: 'rgba(255, 255, 255, 0.1)',
                       borderRadius: 'calc(max(0px, var(--card-radius) - var(--ui-inset) + var(--ui-radius-bias)))',
-                      padding: '8px 10px'
+                      padding: '8px 10px',
+                      touchAction: 'pan-y'
                     } as React.CSSProperties
                   }
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 pointer-events-none select-none">
                     <div
                       className="rounded-full overflow-hidden border border-white/10 flex-shrink-0"
                       style={{ width: '32px', height: '32px' }}
                     >
                       <img
-                        className="w-full h-full object-cover rounded-full"
+                        className="w-full h-full object-cover rounded-full pointer-events-none select-none"
                         src={miniAvatarUrl || avatarUrl}
                         alt={`${name || 'User'} mini avatar`}
                         loading="lazy"
-                        style={{ display: 'block', gridArea: 'auto', borderRadius: '50%', pointerEvents: 'auto' }}
+                        draggable={false}
+                        style={{ display: 'block', gridArea: 'auto', borderRadius: '50%', pointerEvents: 'none', userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties}
                         onError={e => {
                           const t = e.target as HTMLImageElement;
                           t.style.opacity = '0.5';
@@ -573,15 +581,15 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                         }}
                       />
                     </div>
-                    <div className="flex flex-col items-start gap-0.5 font-dmSans">
+                    <div className="flex flex-col items-start gap-0.5 font-dmSans pointer-events-none select-none">
                       <div className="text-[11px] font-medium text-white/90 leading-none">@{handle}</div>
                       <div className="text-[10px] text-white/70 leading-none">{status}</div>
                     </div>
                   </div>
                   <button
-                    className="font-dmSans border border-white/10 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-white/90 cursor-pointer backdrop-blur-[10px] transition-all duration-200 ease-out hover:border-white/40 hover:-translate-y-px"
+                    className="font-dmSans border border-white/10 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-white/90 cursor-pointer backdrop-blur-[10px] transition-all duration-200 ease-out hover:border-white/40 hover:-translate-y-px pointer-events-auto touch-pan-y"
                     onClick={handleContactClick}
-                    style={{ pointerEvents: 'auto', display: 'block', gridArea: 'auto', borderRadius: '6px' }}
+                    style={{ pointerEvents: 'auto', display: 'block', gridArea: 'auto', borderRadius: '6px', touchAction: 'pan-y' }}
                     type="button"
                     aria-label={`Contact ${name || 'user'}`}
                   >
