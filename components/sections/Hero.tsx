@@ -111,7 +111,7 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-4 mb-4 sm:mt-6 sm:mb-5 md:mt-4 md:mb-6 relative z-10 flex justify-center items-center overflow-visible"
+          className="mt-2 mb-1 sm:mt-4 sm:mb-2 md:mt-2 md:mb-2 relative z-10 flex justify-center items-center overflow-visible"
         >
           <ProfileCard
             name=""
@@ -130,13 +130,13 @@ export default function Hero() {
           />
         </motion.div>
 
-        {/* Main Name */}
+        {/* Main Name — positioned cleanly below the photo card with no overlap */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="font-syne tracking-tighter leading-none relative z-20 -mt-14 sm:-mt-16 md:-mt-20 pointer-events-none"
-          style={{ fontSize: 'clamp(44px, 10vw, 110px)', willChange: 'transform, opacity' }}
+          className="font-syne tracking-tighter leading-none relative z-20 mt-1 sm:mt-2 pointer-events-none"
+          style={{ fontSize: 'clamp(40px, 8.5vw, 96px)', willChange: 'transform, opacity' }}
         >
           <span className="gradient-text uppercase font-extrabold block">
             Shabab Ahmed
