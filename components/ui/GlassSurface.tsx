@@ -103,7 +103,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     setMounted(true);
     const isWebkit = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     const isFirefox = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
-    setSvgSupported(!isWebkit && !isFirefox);
+    const isTouch = typeof navigator !== 'undefined' && (navigator.maxTouchPoints > 0 || window.innerWidth < 768);
+    setSvgSupported(!isWebkit && !isFirefox && !isTouch);
   }, []);
 
   const isDarkMode = true;
@@ -167,6 +168,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     if (!node) return;
     containerRef.current = node;
 
+    if (!svgSupported) return;
+
     requestAnimationFrame(() => {
       updateDisplacementMap();
       updateChannels();
@@ -179,7 +182,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       resizeObserver.observe(node);
       return () => resizeObserver.disconnect();
     }
-  }, [updateDisplacementMap, updateChannels]);
+  }, [svgSupported, updateDisplacementMap, updateChannels]);
 
   // Re-sync SVG filter when distortion/offset props change after mount
   const prevPropsRef = useRef({ distortionScale, redOffset, greenOffset, blueOffset, displace });
@@ -211,57 +214,64 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   };
 
   const backdropSupported =
-    mounted && typeof window !== 'undefined' && CSS.supports('backdrop-filter', 'blur(10px)');
+    mounted &&
+    typeof window !== 'undefined' &&
+    (CSS.supports('backdrop-filter', 'blur(10px)') ||
+      CSS.supports('-webkit-backdrop-filter', 'blur(10px)'));
 
   const getContainerStyles = (): React.CSSProperties => {
+    const isWarmBreathe = Boolean(className && className.includes('warm-breathe-glow'));
+
     if (svgSupported) {
       return {
         ...baseStyles,
         background: isDarkMode
-          ? `hsl(0 0% 0% / ${backgroundOpacity})`
-          : `hsl(0 0% 100% / ${backgroundOpacity})`,
+          ? `rgba(255, 255, 255, ${backgroundOpacity > 0 ? backgroundOpacity : 0.04})`
+          : `rgba(255, 255, 255, ${backgroundOpacity > 0 ? backgroundOpacity : 0.25})`,
         backdropFilter: `url(#${filterId}) saturate(${saturation})`,
         WebkitBackdropFilter: `url(#${filterId}) saturate(${saturation})`,
         boxShadow: isDarkMode ? SHADOW_SVG_DARK : SHADOW_SVG_LIGHT,
+        ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.2)' }),
       };
     }
 
     const cssBlur = isDarkMode
-      ? 'blur(12px) saturate(1.8) brightness(1.2)'
-      : 'blur(12px) saturate(1.8) brightness(1.1)';
+      ? 'blur(14px) saturate(1.8) brightness(1.15)'
+      : 'blur(14px) saturate(1.8) brightness(1.1)';
 
     if (isDarkMode) {
       return backdropSupported
         ? {
             ...baseStyles,
-            background: 'rgba(255,255,255,0.1)',
+            background: 'rgba(255, 255, 255, 0.08)',
             backdropFilter: cssBlur,
             WebkitBackdropFilter: cssBlur,
-            border: '1px solid rgba(255,255,255,0.2)',
-            boxShadow: SHADOW_INSET_DARK,
+            ...(isWarmBreathe
+              ? {}
+              : {
+                  border: '1px solid rgba(255, 255, 255, 0.22)',
+                  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 1px 0 rgba(255, 255, 255, 0.35)',
+                }),
           }
         : {
             ...baseStyles,
-            background: 'rgba(0,0,0,0.4)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            boxShadow: SHADOW_INSET_DARK,
+            background: 'rgba(12, 18, 32, 0.85)',
+            ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: SHADOW_INSET_DARK }),
           };
     }
 
     return backdropSupported
       ? {
           ...baseStyles,
-          background: 'rgba(255,255,255,0.25)',
+          background: 'rgba(255, 255, 255, 0.35)',
           backdropFilter: cssBlur,
           WebkitBackdropFilter: cssBlur,
-          border: '1px solid rgba(255,255,255,0.3)',
-          boxShadow: SHADOW_INSET_LIGHT,
+          ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: SHADOW_INSET_LIGHT }),
         }
       : {
           ...baseStyles,
-          background: 'rgba(255,255,255,0.4)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          boxShadow: SHADOW_INSET_LIGHT,
+          background: 'rgba(255, 255, 255, 0.55)',
+          ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: SHADOW_INSET_LIGHT }),
         };
   };
 
