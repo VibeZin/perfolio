@@ -283,32 +283,37 @@ html.lenis, html.lenis body {
   transform: translateX(-50%);
   width: calc(100% - 2rem);
   padding: 8px 16px;
-  background-color: rgba(var(--surface-rgb), 0.25);
-  border-color: rgba(var(--border-rgb), 0.4);
-  box-shadow: 0 4px 12px rgba(var(--ink-rgb), 0.02), inset 0 1px 1px rgba(var(--surface-rgb), 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(245, 158, 11, 0.03) 75%, rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
+  -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.18);
   transition:
-    background-color 0.3s ease,
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
   will-change: transform; /* already on its own compositor layer due to position:fixed */
 }
 
 .navbar-pill[data-scrolled="true"] {
-  background-color: rgba(var(--surface-rgb), 0.75);
-  border-color: var(--border);
-  box-shadow: 0 12px 30px -10px rgba(var(--ink-rgb), 0.08), inset 0 1px 2px rgba(var(--surface-rgb), 0.25), 0 0 20px var(--glow);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 18, 28, 0.65) 50%, rgba(245, 158, 11, 0.05) 80%, rgba(255, 255, 255, 0.10) 100%);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 16px 40px -10px rgba(0, 0, 0, 0.5),
+    0 0 24px 2px rgba(245, 158, 11, 0.18),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 @media (min-width: 768px) {
   .navbar-pill {
     width: 720px;
     padding: 14px 28px;
-    transition:
-      width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-      padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-      background-color 0.3s ease,
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
   }
   .navbar-pill[data-scrolled="true"] {
     width: 560px;
@@ -316,17 +321,9 @@ html.lenis, html.lenis body {
   }
 }
 
-/* backdrop-filter only on desktop — on mobile it triggers full-page compositing every scroll frame */
 .navbar-blur {
-  background-color: rgba(var(--surface-rgb), 0.85);
-}
-
-@media (min-width: 768px) {
-  .navbar-blur {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background-color: transparent;
-  }
+  backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
+  -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
 }
 
 /* ─── GPU Compositor Hints ────────────────────────────────────────────────── */

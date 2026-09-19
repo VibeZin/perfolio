@@ -587,13 +587,31 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                     </div>
                   </div>
                   <button
-                    className="font-dmSans border border-white/10 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-white/90 cursor-pointer backdrop-blur-[10px] transition-all duration-200 ease-out hover:border-white/40 hover:-translate-y-px pointer-events-auto touch-pan-y"
+                    className="font-dmSans text-[10px] font-semibold text-white tracking-wide cursor-pointer transition-all duration-200 ease-out hover:scale-105 active:scale-95 pointer-events-auto touch-pan-y relative overflow-hidden group/pbtn"
                     onClick={handleContactClick}
-                    style={{ pointerEvents: 'auto', display: 'block', gridArea: 'auto', borderRadius: '6px', touchAction: 'pan-y' }}
+                    style={{
+                      pointerEvents: 'auto',
+                      display: 'block',
+                      gridArea: 'auto',
+                      borderRadius: '8px',
+                      padding: '5px 12px',
+                      touchAction: 'pan-y',
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(245, 158, 11, 0.06) 80%, rgba(255, 255, 255, 0.10) 100%)',
+                      backdropFilter: 'blur(14px) saturate(190%) brightness(1.15)',
+                      WebkitBackdropFilter: 'blur(14px) saturate(190%) brightness(1.15)',
+                      border: '1px solid rgba(255, 255, 255, 0.22)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.7), inset 0 -1px 1px rgba(255,255,255,0.15)',
+                    }}
                     type="button"
                     aria-label={`Contact ${name || 'user'}`}
                   >
-                    {contactText}
+                    {/* Top specular shine */}
+                    <span className="absolute inset-x-2 top-0 h-[1px] pointer-events-none" style={{
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)'
+                    }} />
+                    <span className="relative z-10 transition-colors duration-200 group-hover/pbtn:text-amber-300">
+                      {contactText}
+                    </span>
                   </button>
                 </div>
               )}

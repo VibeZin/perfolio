@@ -217,6 +217,14 @@ export default function Navbar() {
         <div className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
           <div className="navbar-sweep w-2/3 h-full bg-gradient-to-r from-transparent via-white/18 to-transparent skew-x-12" />
         </div>
+        {/* Top Specular Rim along the navbar pill curve */}
+        <div
+          className="absolute inset-x-8 top-0 h-[1px] pointer-events-none z-10"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.75) 50%, transparent 100%)',
+          }}
+        />
+
         {/* Left Side: Logo */}
         <a
           id="navbar-logo"
@@ -261,16 +269,16 @@ export default function Navbar() {
         {/* Right Side: Hamburger Menu */}
         <div className="flex items-center">
 
-          {/* Hamburger Menu Icon — fully functional on mobile and desktop */}
+          {/* Hamburger Menu Icon — pure liquid glassmorphic button */}
           <button
             id="mobile-menu-toggle"
             ref={menuButtonRef}
             onClick={handleOpenMenu}
             style={{ touchAction: 'manipulation' }}
-            className="flex items-center justify-center w-10 h-10 -mr-1.5 text-frost hover:text-ink cursor-pointer active:scale-95 transition-transform"
+            className="flex items-center justify-center w-10 h-10 -mr-1 text-frost hover:text-ink cursor-pointer active:scale-95 transition-all rounded-full border border-white/20 bg-gradient-to-br from-white/14 via-white/[0.03] to-white/[0.08] backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:border-amber-400/60 hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]"
             aria-label="Open navigation menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5 text-frost hover:text-amber-400 transition-colors" />
           </button>
         </div>
       </nav>
@@ -339,7 +347,7 @@ export default function Navbar() {
               className="relative z-10 w-full h-full flex flex-col justify-center items-center p-6"
               onClick={handleCloseMenu}
             >
-              {/* Close Button */}
+              {/* Close Button — pure liquid glassmorphic button */}
               <motion.button
                 id="mobile-menu-close"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -351,7 +359,7 @@ export default function Navbar() {
                   handleCloseMenu();
                 }}
                 style={{ touchAction: 'manipulation' }}
-                className="absolute top-6 right-6 sm:top-8 sm:right-8 p-3 text-frost hover:text-ink cursor-pointer rounded-full border border-border/80 bg-surface/30 active:scale-90 transition-transform shadow-lg"
+                className="absolute top-6 right-6 sm:top-8 sm:right-8 w-12 h-12 flex items-center justify-center text-frost hover:text-amber-400 cursor-pointer rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl active:scale-90 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]"
                 aria-label="Close navigation menu"
               >
                 <X className="w-6 h-6" />
@@ -389,22 +397,40 @@ export default function Navbar() {
                 })}
               </motion.div>
 
-              {/* Bottom decoration */}
+              {/* Bottom Socials — pure liquid glassmorphic round buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ delay: 0.18, duration: 0.22 }}
-                className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-6"
+                className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4"
               >
-                <a href="https://www.instagram.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                  <Instagram className="w-6 h-6" />
+                <a
+                  href="https://www.instagram.com/shababahmedtzn/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
                 </a>
-                <a href="https://www.facebook.com/shababahmedtzn/" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                  <Facebook className="w-6 h-6" />
+                <a
+                  href="https://www.facebook.com/shababahmedtzn/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-5 h-5" />
                 </a>
-                <a href="https://github.com/VibeZin" target="_blank" rel="noopener noreferrer" className="text-frost/60 hover:text-accent hover:scale-110 transition-all duration-200">
-                  <Github className="w-6 h-6" />
+                <a
+                  href="https://github.com/VibeZin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  aria-label="GitHub"
+                >
+                  <Github className="w-5 h-5" />
                 </a>
               </motion.div>
             </motion.div>

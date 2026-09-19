@@ -141,7 +141,7 @@ export default function Contact() {
           </Magnetic>
         </motion.div>
 
-        {/* Social Icons Container */}
+        {/* Social Icons Container — pure liquid glassmorphic buttons */}
         <motion.div variants={fadeUpVariants} className="flex flex-col gap-4 items-center mt-6">
           <div className="flex gap-4">
             {socialIcons.map((social) => {
@@ -152,10 +152,17 @@ export default function Contact() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  className="w-12 h-12 rounded-full border border-border/80 flex items-center justify-center text-frost hover:text-accent hover:border-accent transition-colors duration-300 bg-surface/20"
+                  whileHover={{ scale: 1.12, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="group relative inline-flex items-center justify-center rounded-full focus:outline-none cursor-pointer select-none"
+                  aria-label={social.name}
                 >
-                  <IconComp className="w-5 h-5" />
+                  <GlassSurface
+                    borderRadius={9999}
+                    className="w-12 h-12 rounded-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] flex items-center justify-center text-frost group-hover:text-amber-400"
+                  >
+                    <IconComp className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+                  </GlassSurface>
                 </motion.a>
               );
             })}

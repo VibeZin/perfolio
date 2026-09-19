@@ -187,10 +187,10 @@ function ProjectCard({ project }: { project: Project }) {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}
-                  className="text-frost hover:text-accent p-1.5 rounded-full hover:bg-surface/50 border border-transparent hover:border-border/30 hover:shadow-[0_0_12px_rgba(var(--accent-rgb),0.3)] transition-all duration-300 flex items-center justify-center cursor-pointer"
+                  className="w-9 h-9 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_16px_rgba(245,158,11,0.35)] shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] transition-all duration-300 cursor-pointer"
                   aria-label={`Visit repository for ${project.name}`}
                 >
-                  <Github className="w-5 h-5" />
+                  <Github className="w-4 h-4" />
                 </motion.a>
               )}
             </div>
