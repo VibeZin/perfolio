@@ -198,13 +198,19 @@ export default function LineWaves({
     let menuOpen = false;
     let frameSkip = 0; // For mobile 30fps throttling
 
-    const viewportObserver = new IntersectionObserver(
-      ([entry]) => {
-        inViewport = entry.isIntersecting;
-      },
-      { threshold: 0.01 }
-    );
-    viewportObserver.observe(container);
+    // For fixed full-screen backgrounds, avoid IntersectionObserver quirks during mobile scroll
+    const isFixed = Boolean(container.closest('.fixed') || window.getComputedStyle(container).position === 'fixed');
+    let viewportObserver: IntersectionObserver | null = null;
+
+    if (!isFixed) {
+      viewportObserver = new IntersectionObserver(
+        ([entry]) => {
+          inViewport = entry.isIntersecting;
+        },
+        { threshold: 0.01 }
+      );
+      viewportObserver.observe(container);
+    }
 
     const handleMenuToggle = (e: Event) => {
       const custom = e as CustomEvent<{ open: boolean }>;
@@ -229,8 +235,21 @@ export default function LineWaves({
       isVisible = !document.hidden;
     }
 
+    let lastW = 0;
+    let lastH = 0;
     function resize() {
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      const w = container.offsetWidth;
+      const h = container.offsetHeight;
+      if (w === 0 || h === 0) return;
+
+      // On mobile touch devices, ignore minor vertical shifts (< 90px) caused by browser address bar collapsing
+      if (isTouchDevice && lastW === w && Math.abs(lastH - h) < 90) {
+        return;
+      }
+      lastW = w;
+      lastH = h;
+
+      renderer.setSize(w, h);
       if (program) {
         program.uniforms.uResolution.value = [gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height];
       }
@@ -304,7 +323,7 @@ export default function LineWaves({
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
-      viewportObserver.disconnect();
+      viewportObserver?.disconnect();
       window.removeEventListener('portfolio:menu-toggle', handleMenuToggle);
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
