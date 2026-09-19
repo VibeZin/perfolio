@@ -105,7 +105,7 @@ export default function Contact() {
         <motion.div variants={fadeUpVariants} className="mt-4 flex justify-center">
           <Magnetic>
             <a
-              href="mailto:placeholder@gmail.com"
+              href="mailto:shababahmedtazin2021@gmail.com"
               className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97]"
               aria-label="Send Me a Mail"
             >
