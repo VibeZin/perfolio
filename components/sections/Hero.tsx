@@ -201,13 +201,13 @@ export default function Hero() {
               aria-label="See My Work"
             >
               <GlassSurface
-                displace={1}
-                distortionScale={-150}
-                redOffset={19}
-                greenOffset={-1}
-                blueOffset={5}
-                brightness={60}
-                opacity={0.8}
+                displace={0.6}
+                distortionScale={270}
+                redOffset={10}
+                greenOffset={14}
+                blueOffset={2}
+                brightness={45}
+                opacity={0.43}
                 mixBlendMode="screen"
                 borderRadius={9999}
                 className="warm-breathe-glow px-6 sm:px-7 py-3 h-[52px] sm:h-12 w-full sm:w-auto min-w-[150px] sm:min-w-[165px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
@@ -237,13 +237,13 @@ export default function Hero() {
               aria-label="Get in Touch"
             >
               <GlassSurface
-                displace={1}
-                distortionScale={-150}
-                redOffset={19}
-                greenOffset={-1}
-                blueOffset={5}
-                brightness={60}
-                opacity={0.8}
+                displace={0.6}
+                distortionScale={270}
+                redOffset={10}
+                greenOffset={14}
+                blueOffset={2}
+                brightness={45}
+                opacity={0.43}
                 mixBlendMode="screen"
                 borderRadius={9999}
                 className="warm-breathe-glow px-6 sm:px-7 py-3 h-[52px] sm:h-12 w-full sm:w-auto min-w-[150px] sm:min-w-[165px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"

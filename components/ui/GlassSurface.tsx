@@ -103,8 +103,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     setMounted(true);
     const isWebkit = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     const isFirefox = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
-    const isTouch = typeof navigator !== 'undefined' && (navigator.maxTouchPoints > 0 || window.innerWidth < 768);
-    setSvgSupported(!isWebkit && !isFirefox && !isTouch);
+    setSvgSupported(!isWebkit && !isFirefox);
   }, []);
 
   const isDarkMode = true;
@@ -226,8 +225,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       return {
         ...baseStyles,
         background: isDarkMode
-          ? `rgba(255, 255, 255, ${backgroundOpacity > 0 ? backgroundOpacity : 0.04})`
-          : `rgba(255, 255, 255, ${backgroundOpacity > 0 ? backgroundOpacity : 0.25})`,
+          ? `hsl(0 0% 0% / ${backgroundOpacity})`
+          : `hsl(0 0% 100% / ${backgroundOpacity})`,
         backdropFilter: `url(#${filterId}) saturate(${saturation})`,
         WebkitBackdropFilter: `url(#${filterId}) saturate(${saturation})`,
         boxShadow: isDarkMode ? SHADOW_SVG_DARK : SHADOW_SVG_LIGHT,
