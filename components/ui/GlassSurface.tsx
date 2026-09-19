@@ -55,9 +55,6 @@ const SHADOW_SVG_LIGHT = [
   '0px 16px 56px rgba(17, 17, 26, 0.05) inset',
 ].join(', ');
 
-const SHADOW_INSET_DARK = 'inset 0 1px 0 0 rgba(255,255,255,0.2), inset 0 -1px 0 0 rgba(255,255,255,0.1)';
-const SHADOW_INSET_LIGHT = '0 8px 32px 0 rgba(31,38,135,0.2), 0 2px 16px 0 rgba(31,38,135,0.1), inset 0 1px 0 0 rgba(255,255,255,0.4), inset 0 -1px 0 0 rgba(255,255,255,0.2)';
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const GlassSurface: React.FC<GlassSurfaceProps> = ({
@@ -99,15 +96,6 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   const blueChannelRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const gaussianBlurRef = useRef<SVGFEGaussianBlurElement | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    const isWebkit = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-    const isFirefox = typeof navigator !== 'undefined' && /Firefox/.test(navigator.userAgent);
-    setSvgSupported(!isWebkit && !isFirefox);
-  }, []);
-
-  const isDarkMode = true;
-
   // Builds the SVG data URI that acts as the displacement heightmap
   const generateDisplacementMap = useCallback(() => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -140,7 +128,9 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
 
   const updateDisplacementMap = useCallback(() => {
     if (feImageRef.current) {
-      feImageRef.current.setAttribute('href', generateDisplacementMap());
+      const uri = generateDisplacementMap();
+      feImageRef.current.setAttribute('href', uri);
+      feImageRef.current.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', uri);
     }
   }, [generateDisplacementMap]);
 
@@ -162,12 +152,26 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     }
   }, [distortionScale, redOffset, greenOffset, blueOffset, xChannel, yChannel, displace]);
 
+  useEffect(() => {
+    setMounted(true);
+    // Detect whether the current browser actually supports SVG filters in CSS backdrop-filter
+    const supportsSvg =
+      typeof window !== 'undefined' &&
+      typeof CSS !== 'undefined' &&
+      (CSS.supports('backdrop-filter', 'url(#test)') ||
+        CSS.supports('-webkit-backdrop-filter', 'url(#test)'));
+    setSvgSupported(Boolean(supportsSvg));
+
+    requestAnimationFrame(() => {
+      updateDisplacementMap();
+      updateChannels();
+    });
+  }, [updateDisplacementMap, updateChannels]);
+
   // Runs when the container mounts
   const containerCallbackRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return;
     containerRef.current = node;
-
-    if (!svgSupported) return;
 
     requestAnimationFrame(() => {
       updateDisplacementMap();
@@ -181,7 +185,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       resizeObserver.observe(node);
       return () => resizeObserver.disconnect();
     }
-  }, [svgSupported, updateDisplacementMap, updateChannels]);
+  }, [updateDisplacementMap, updateChannels]);
 
   // Re-sync SVG filter when distortion/offset props change after mount
   const prevPropsRef = useRef({ distortionScale, redOffset, greenOffset, blueOffset, displace });
@@ -212,71 +216,34 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     borderRadius: `${borderRadius}px`,
   };
 
-  const backdropSupported =
-    mounted &&
-    typeof window !== 'undefined' &&
-    (CSS.supports('backdrop-filter', 'blur(10px)') ||
-      CSS.supports('-webkit-backdrop-filter', 'blur(10px)'));
-
   const getContainerStyles = (): React.CSSProperties => {
     const isWarmBreathe = Boolean(className && className.includes('warm-breathe-glow'));
 
-    if (svgSupported) {
-      return {
-        ...baseStyles,
-        background: isDarkMode
-          ? `hsl(0 0% 0% / ${backgroundOpacity})`
-          : `hsl(0 0% 100% / ${backgroundOpacity})`,
-        backdropFilter: `url(#${filterId}) saturate(${saturation})`,
-        WebkitBackdropFilter: `url(#${filterId}) saturate(${saturation})`,
-        boxShadow: isDarkMode ? SHADOW_SVG_DARK : SHADOW_SVG_LIGHT,
-        ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.2)' }),
-      };
-    }
+    // Pure Liquid Glass Material:
+    // Translucent multi-stop crystal gradient with high optical clarity (NOT milky / frosted)
+    const glassBackground =
+      'linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.02) 42%, rgba(245, 158, 11, 0.04) 75%, rgba(255, 255, 255, 0.09) 100%)';
 
-    const cssBlur = isDarkMode
-      ? 'blur(14px) saturate(1.8) brightness(1.15)'
-      : 'blur(14px) saturate(1.8) brightness(1.1)';
+    // When the browser supports SVG backdrop-filter, use the SVG displacement filter.
+    // Otherwise, use the enhanced liquid glass blur with high saturation & optical brightness boost!
+    const glassFilter = svgSupported
+      ? `url(#${filterId}) saturate(${saturation})`
+      : `blur(16px) saturate(190%) brightness(1.15) contrast(102%)`;
 
-    if (isDarkMode) {
-      return backdropSupported
-        ? {
-            ...baseStyles,
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: cssBlur,
-            WebkitBackdropFilter: cssBlur,
-            ...(isWarmBreathe
-              ? {}
-              : {
-                  border: '1px solid rgba(255, 255, 255, 0.22)',
-                  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.25), inset 0 1px 1px 0 rgba(255, 255, 255, 0.35)',
-                }),
-          }
-        : {
-            ...baseStyles,
-            background: 'rgba(12, 18, 32, 0.85)',
-            ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: SHADOW_INSET_DARK }),
-          };
-    }
-
-    return backdropSupported
-      ? {
-          ...baseStyles,
-          background: 'rgba(255, 255, 255, 0.35)',
-          backdropFilter: cssBlur,
-          WebkitBackdropFilter: cssBlur,
-          ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: SHADOW_INSET_LIGHT }),
-        }
-      : {
-          ...baseStyles,
-          background: 'rgba(255, 255, 255, 0.55)',
-          ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: SHADOW_INSET_LIGHT }),
-        };
+    return {
+      ...baseStyles,
+      background: glassBackground,
+      backdropFilter: glassFilter,
+      WebkitBackdropFilter: glassFilter,
+      boxShadow: isWarmBreathe
+        ? undefined
+        : '0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.18)',
+      ...(isWarmBreathe ? {} : { border: '1px solid rgba(255, 255, 255, 0.22)' }),
+    };
   };
 
-  const focusRing = isDarkMode
-    ? 'focus-visible:outline-2 focus-visible:outline-[#0A84FF] focus-visible:outline-offset-2'
-    : 'focus-visible:outline-2 focus-visible:outline-[#007AFF] focus-visible:outline-offset-2';
+  const focusRing =
+    'focus-visible:outline-2 focus-visible:outline-[#0A84FF] focus-visible:outline-offset-2';
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -288,9 +255,12 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
       {...divProps}
     >
       {/* Hidden SVG housing the displacement filter — applied via backdropFilter above */}
-      <svg className="w-full h-full pointer-events-none absolute inset-0 opacity-0 -z-10" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        className="w-full h-full pointer-events-none absolute inset-0 opacity-0 -z-10"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <defs>
-          <filter id={filterId} colorInterpolationFilters="sRGB" x="0%" y="0%" width="100%" height="100%">
+          <filter id={filterId} colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
             <feImage ref={feImageRef} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map"/>
 
             <feDisplacementMap ref={redChannelRef} in="SourceGraphic" in2="map" result="dispRed"/>
@@ -308,6 +278,27 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
           </filter>
         </defs>
       </svg>
+
+      {/* Pure Liquid Glass Specular Reflections (Apple Glass / VisionOS crystalline sheen) */}
+      <div
+        className="absolute inset-0 pointer-events-none rounded-[inherit] overflow-hidden z-[1]"
+        aria-hidden="true"
+      >
+        {/* Curved upper glass glaze */}
+        <div
+          className="absolute inset-x-0 top-0 h-1/2 rounded-t-[inherit]"
+          style={{
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%)',
+          }}
+        />
+        {/* Razor-thin 1px top highlight rim catching ambient light */}
+        <div
+          className="absolute inset-x-3 top-0 h-[1px]"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%)',
+          }}
+        />
+      </div>
 
       <div className="w-full h-full flex items-center justify-center rounded-[inherit] relative z-10 pointer-events-auto">
         {children}
