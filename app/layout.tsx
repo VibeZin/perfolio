@@ -25,6 +25,14 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: 'Shabab Ahmed',
   description: 'Software Developer & Builder. BBA student at UAP Dhaka turning ideas into real products.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
