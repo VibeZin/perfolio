@@ -6,6 +6,7 @@ import { LineWavesColorProvider } from '@/context/LineWavesColorContext';
 
 import WebsiteBackground from '@/components/layout/WebsiteBackground';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
+import AdaptiveFavicon from '@/components/layout/AdaptiveFavicon';
 import './globals.css';
 
 const syne = Syne({
@@ -27,13 +28,13 @@ export const metadata: Metadata = {
   description: 'Software Developer & Builder. BBA student at UAP Dhaka turning ideas into real products.',
   icons: {
     icon: [
-      { url: '/favicon.svg?v=3', type: 'image/svg+xml' },
-      { url: '/favicon.ico?v=3', sizes: 'any' },
-      { url: '/favicon-32x32.png?v=3', type: 'image/png', sizes: '32x32' },
-      { url: '/icon.png?v=3', type: 'image/png', sizes: '512x512' },
+      { url: '/favicon-light-32x32.png?v=4', media: '(prefers-color-scheme: light)', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-dark-32x32.png?v=4', media: '(prefers-color-scheme: dark)', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.svg?v=4', type: 'image/svg+xml' },
+      { url: '/favicon-dark.png?v=4', sizes: '512x512', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico?v=3',
-    apple: '/apple-touch-icon.png?v=3',
+    shortcut: '/favicon.ico?v=4',
+    apple: '/apple-touch-icon.png?v=4',
   },
 };
 
@@ -49,6 +50,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen text-ink transition-colors duration-300 font-dmSans antialiased">
+        <AdaptiveFavicon />
         <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
           <SmoothScrollProvider>
             <LineWavesColorProvider>
