@@ -15,30 +15,36 @@ export default function AdaptiveFavicon() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const updateFavicon = (isDark: boolean) => {
-      const darkIcons = {
-        ico: '/favicon-dark.ico?v=4',
-        png32: '/favicon-dark-32x32.png?v=4',
-        png: '/favicon-dark.png?v=4',
-      };
-      const lightIcons = {
-        ico: '/favicon-light.ico?v=4',
-        png32: '/favicon-light-32x32.png?v=4',
-        png: '/favicon-light.png?v=4',
-      };
+      const selected = isDark
+        ? { png32: '/favicon-dark-32x32.png?v=5', ico: '/favicon-dark.ico?v=5', png: '/favicon-dark.png?v=5' }
+        : { png32: '/favicon-light-32x32.png?v=5', ico: '/favicon-light.ico?v=5', png: '/favicon-light.png?v=5' };
 
-      const selected = isDark ? darkIcons : lightIcons;
+      // Remove existing icon links to force browser UI thread to re-read the icon
+      document.querySelectorAll<HTMLLinkElement>("link[rel='icon'], link[rel='shortcut icon']").forEach((el) => {
+        el.remove();
+      });
 
-      // Update shortcut icon / default ico
-      const shortcut = document.querySelector<HTMLLinkElement>("link[rel='shortcut icon']");
-      if (shortcut) shortcut.href = selected.ico;
+      // 1. Primary 32x32 PNG icon
+      const link32 = document.createElement('link');
+      link32.rel = 'icon';
+      link32.type = 'image/png';
+      link32.sizes = '32x32';
+      link32.href = selected.png32;
+      document.head.appendChild(link32);
 
-      // Update 32x32 icon
-      const icon32 = document.querySelector<HTMLLinkElement>("link[rel='icon'][sizes='32x32']");
-      if (icon32) icon32.href = selected.png32;
+      // 2. High-res PNG icon
+      const linkHigh = document.createElement('link');
+      linkHigh.rel = 'icon';
+      linkHigh.type = 'image/png';
+      linkHigh.sizes = '512x512';
+      linkHigh.href = selected.png;
+      document.head.appendChild(linkHigh);
 
-      // Update default icon if present without explicit media query
-      const defaultIcon = document.querySelector<HTMLLinkElement>("link[rel='icon']:not([media]):not([type='image/svg+xml'])");
-      if (defaultIcon) defaultIcon.href = selected.png;
+      // 3. Fallback shortcut ICO
+      const shortcut = document.createElement('link');
+      shortcut.rel = 'shortcut icon';
+      shortcut.href = selected.ico;
+      document.head.appendChild(shortcut);
     };
 
     // Initial check
