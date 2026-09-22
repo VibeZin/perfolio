@@ -27,12 +27,13 @@ export const metadata: Metadata = {
   description: 'Software Developer & Builder. BBA student at UAP Dhaka turning ideas into real products.',
   icons: {
     icon: [
-      { url: '/favicon.ico?v=2', sizes: 'any' },
-      { url: '/favicon-32x32.png?v=2', type: 'image/png', sizes: '32x32' },
-      { url: '/icon.png?v=2', type: 'image/png', sizes: '512x512' },
+      { url: '/favicon.svg?v=3', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=3', sizes: 'any' },
+      { url: '/favicon-32x32.png?v=3', type: 'image/png', sizes: '32x32' },
+      { url: '/icon.png?v=3', type: 'image/png', sizes: '512x512' },
     ],
-    shortcut: '/favicon.ico?v=2',
-    apple: '/apple-touch-icon.png?v=2',
+    shortcut: '/favicon.ico?v=3',
+    apple: '/apple-touch-icon.png?v=3',
   },
 };
 
