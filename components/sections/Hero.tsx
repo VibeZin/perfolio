@@ -74,7 +74,7 @@ export default function Hero() {
   const baseSpeed = presets?.[2]?.params?.speed ?? 0.6;
   const shaderSpeed = isMenuOpen ? 0 : baseSpeed;
 
-  // Ultra-optimized WebGL context: desynchronized for zero-lock 60/90/120 Hz compositing
+  // Optimized WebGL context: minimal buffer config for a decorative background shader
   const webGlAttributes = useMemo<WebGLContextAttributes>(
     () => ({
       powerPreference: 'high-performance',
@@ -82,7 +82,6 @@ export default function Hero() {
       depth: false,
       stencil: false,
       antialias: false,
-      desynchronized: true,
     }),
     []
   );
