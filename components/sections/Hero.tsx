@@ -98,7 +98,7 @@ export default function Hero() {
       <div
         id="hero-canvas-container"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
-        style={{ isolation: 'isolate', transform: 'translateZ(0)', willChange: 'transform', contain: 'strict' }}
+        style={{ isolation: 'isolate', transform: 'translateZ(0)', contain: 'layout paint' }}
       >
         {/* Render on all devices when in viewport with continuous live fluid motion */}
         {presets && shaderVisible && (
@@ -158,7 +158,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="font-syne tracking-tighter leading-none relative z-20 mt-1 sm:mt-2 pointer-events-none"
-          style={{ fontSize: 'clamp(40px, 8.5vw, 96px)', willChange: 'transform, opacity' }}
+          style={{ fontSize: 'clamp(40px, 8.5vw, 96px)' }}
         >
           <span className="gradient-text uppercase font-extrabold block">
             Shabab Ahmed
