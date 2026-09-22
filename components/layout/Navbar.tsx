@@ -397,40 +397,41 @@ export default function Navbar() {
                 })}
               </motion.div>
 
-              {/* Bottom Socials — pure liquid glassmorphic round buttons */}
+              {/* Bottom Socials — pure liquid glassmorphic round buttons perfectly centered */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ delay: 0.18, duration: 0.22 }}
-                className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4"
+                className="absolute bottom-8 sm:bottom-10 inset-x-0 mx-auto w-fit flex items-center justify-center gap-4 z-20"
+                onClick={(e) => e.stopPropagation()}
               >
                 <a
                   href="https://www.instagram.com/shababahmedtzn/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
                   aria-label="Instagram"
                 >
-                  <Instagram className="w-5 h-5" />
+                  <Instagram className="w-5 h-5 shrink-0" />
                 </a>
                 <a
                   href="https://www.facebook.com/shababahmedtzn/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
                   aria-label="Facebook"
                 >
-                  <Facebook className="w-5 h-5" />
+                  <Facebook className="w-5 h-5 shrink-0" />
                 </a>
                 <a
                   href="https://github.com/VibeZin"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
                   aria-label="GitHub"
                 >
-                  <Github className="w-5 h-5" />
+                  <Github className="w-5 h-5 shrink-0" />
                 </a>
               </motion.div>
             </motion.div>
