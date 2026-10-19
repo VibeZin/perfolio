@@ -26,12 +26,10 @@ export default function Hero() {
     const isTouch = navigator.maxTouchPoints > 0;
     setIsTouchDevice(isTouch);
 
-    // Only load the heavy WebGL shader bundle on non-touch (desktop) devices
-    if (!isTouch) {
-      import('@paper-design/shaders-react').then((mod) => {
-        setPresets(mod.liquidMetalPresets);
-      });
-    }
+    // Load the LiquidMetal shader for all devices
+    import('@paper-design/shaders-react').then((mod) => {
+      setPresets(mod.liquidMetalPresets);
+    });
   }, []);
 
   // Listen for mobile menu open/close to immediately halt WebGL render loop and free GPU
@@ -90,37 +88,28 @@ export default function Hero() {
       className="relative w-full min-h-[100svh] md:min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-16 md:pt-20 md:pb-12 overflow-x-hidden bg-transparent touch-pan-y"
       style={{ touchAction: 'pan-y' }}
     >
-      {/* Background: WebGL shader on desktop, pure CSS gradient on mobile */}
+      {/* Liquid Metal Shader — always live, high-performance desynchronized WebGL for 60/90/120Hz */}
       <div
         id="hero-canvas-container"
         className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
         style={{ isolation: 'isolate', transform: 'translateZ(0)', contain: 'layout paint' }}
       >
-        {/* Desktop: Live WebGL LiquidMetal shader */}
-        {!isTouchDevice && presets && shaderVisible && (
+        {/* Render on all devices when in viewport with continuous live fluid motion */}
+        {presets && shaderVisible && (
           <LiquidMetal
             {...(presets[2]?.params || presets[2] || {})}
             shape="none"
             fit="cover"
-            scale={1.95}
+            scale={isTouchDevice ? 1.65 : 1.95}
             speed={shaderSpeed}
             colorBack={themeBack}
             colorTint={themeTint}
             style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
             minPixelRatio={1}
-            maxPixelCount={1600000}
+            maxPixelCount={isTouchDevice ? 380000 : 1600000}
             webGlContextAttributes={webGlAttributes}
           />
         )}
-
-        {/* Mobile: Pure CSS animated gradient — zero GPU, visually matches the liquid metal aesthetic */}
-        {isTouchDevice && (
-          <div
-            className="absolute inset-0 w-full h-full hero-mobile-bg"
-            style={{ zIndex: 0 }}
-          />
-        )}
-
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-65% to-void/90 pointer-events-none z-[1]" />
       </div>
 

@@ -26,31 +26,24 @@ export default function WebsiteBackground() {
       className="fixed inset-0 w-full h-full pointer-events-none -z-10 overflow-hidden select-none bg-void"
       style={{ transform: 'translateZ(0)' }}
     >
-      {/* Desktop: Animated WebGL Ripple Waves */}
-      {!isMobile && (
-        <div className="absolute inset-0 w-full h-full">
-          <LineWaves
-            speed={0.15}
-            innerLineCount={30}
-            outerLineCount={34}
-            warpIntensity={0.8}
-            rotation={-35}
-            edgeFadeWidth={0.1}
-            colorCycleSpeed={0.5}
-            brightness={colors.brightness}
-            color1={colors.color1}
-            color2={colors.color2}
-            color3={colors.color3}
-            enableMouseInteraction={true}
-            mouseInfluence={1.5}
-          />
-        </div>
-      )}
-
-      {/* Mobile: Pure CSS fallback — subtle animated wave lines via gradients */}
-      {isMobile && (
-        <div className="absolute inset-0 w-full h-full site-bg-mobile" />
-      )}
+      {/* Animated WebGL Ripple Waves — rendered on all devices, auto-optimized on mobile */}
+      <div className="absolute inset-0 w-full h-full">
+        <LineWaves
+          speed={isMobile ? 0.12 : 0.15}
+          innerLineCount={isMobile ? 24 : 30}
+          outerLineCount={isMobile ? 28 : 34}
+          warpIntensity={0.8}
+          rotation={-35}
+          edgeFadeWidth={0.1}
+          colorCycleSpeed={0.5}
+          brightness={isMobile ? Math.max(colors.brightness, 0.15) : colors.brightness}
+          color1={colors.color1}
+          color2={colors.color2}
+          color3={colors.color3}
+          enableMouseInteraction={!isMobile}
+          mouseInfluence={1.5}
+        />
+      </div>
 
       {/* Smooth vignette overlay to blend edges with the void background while keeping ripples clear */}
       <div
