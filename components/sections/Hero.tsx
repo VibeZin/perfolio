@@ -13,11 +13,6 @@ const LiquidMetal = dynamic(
   { ssr: false }
 );
 
-const ProfileCard = dynamic(
-  () => import('@/components/ui/ProfileCard'),
-  { ssr: false }
-);
-
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
   const [presets, setPresets] = useState<any[] | null>(null);
@@ -90,7 +85,7 @@ export default function Hero() {
     <section
       ref={heroRef}
       id="hero"
-      className="relative w-full min-h-[100svh] min-h-[820px] sm:min-h-[860px] md:min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-16 md:pt-20 md:pb-12 overflow-x-hidden bg-transparent touch-pan-y"
+      className="relative w-full min-h-[100svh] md:min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-16 md:pt-20 md:pb-12 overflow-x-hidden bg-transparent touch-pan-y"
       style={{ touchAction: 'pan-y' }}
     >
       {/* Liquid Metal Shader — always live, high-performance desynchronized WebGL for 60/90/120Hz */}
@@ -126,37 +121,12 @@ export default function Hero() {
         className="relative z-10 flex flex-col items-center text-center max-w-4xl px-5 sm:px-6 md:px-8 pt-2 pb-6 md:pt-2 md:pb-8 gap-5 sm:gap-6 md:gap-6 select-none touch-pan-y"
         style={{ touchAction: 'pan-y' }}
       >
-        {/* Profile Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-2 mb-1 sm:mt-4 sm:mb-2 md:mt-2 md:mb-2 relative z-10 flex justify-center items-center overflow-visible touch-pan-y"
-          style={{ touchAction: 'pan-y' }}
-        >
-          <ProfileCard
-            name=""
-            title=""
-            handle="shabab"
-            status="Offline (Localhost)"
-            contactText="Get in Touch"
-            avatarUrl="/flipper.jpg"
-            showUserInfo={true}
-            enableTilt={!isTouchDevice}
-            enableMobileTilt={false}
-            onContactClick={() => handleScrollTo('contact')}
-            behindGlowEnabled={true}
-            behindGlowColor="rgba(var(--accent-rgb), 0.4)"
-            innerGradient="linear-gradient(145deg, rgba(var(--surface-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.1) 100%)"
-          />
-        </motion.div>
-
-        {/* Main Name — positioned cleanly below the photo card with no overlap */}
+        {/* Main Name */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="font-syne tracking-tighter leading-none relative z-20 mt-1 sm:mt-2 pointer-events-none"
+          transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="font-syne tracking-tighter leading-none relative z-20 pointer-events-none"
           style={{ fontSize: 'clamp(40px, 8.5vw, 96px)' }}
         >
           <span className="gradient-text uppercase font-extrabold block">
