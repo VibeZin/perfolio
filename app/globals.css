@@ -389,6 +389,33 @@ html.lenis, html.lenis body {
   }
 }
 
+/* ─── Hero Mobile CSS Fallback Background ──────────────────────────────────────
+   Replaces the WebGL LiquidMetal shader on touch/mobile devices with a pure CSS
+   animated gradient. Visually matches the dark navy-blue/steel fluid aesthetic.
+   Zero GPU, zero WebGL context, zero jank. Runs on the CSS compositor only.
+   ──────────────────────────────────────────────────────────────────────────── */
+@keyframes hero-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.hero-mobile-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(50, 82, 140, 0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 70% 60%, rgba(37, 78, 145, 0.25) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(28, 45, 74, 0.4) 0%, transparent 60%),
+    linear-gradient(135deg, #06080E 0%, #0C1220 25%, #111B2E 50%, #0C1220 75%, #06080E 100%);
+  background-size: 200% 200%, 200% 200%, 150% 150%, 200% 200%;
+  animation: hero-drift 20s ease-in-out infinite;
+}
+
 /* ─── Project Card: perspective set in CSS (not inline) to avoid recalcs ─── */
 .project-card-perspective {
   perspective: 1000px;
@@ -414,4 +441,40 @@ html.lenis, html.lenis body {
     pointer-events: auto !important;
     touch-action: pan-y !important;
   }
+}
+
+/* ─── Site Background Mobile CSS Fallback ──────────────────────────────────────
+   Replaces the LineWaves WebGL shader on touch/mobile devices with a pure CSS
+   animated background. Subtle diagonal line pattern with gentle drift animation.
+   Zero GPU, zero WebGL context — works on every phone.
+   ──────────────────────────────────────────────────────────────────────────── */
+@keyframes site-bg-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+.site-bg-mobile {
+  background:
+    repeating-linear-gradient(
+      -35deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(var(--accent-rgb), 0.04) 18px,
+      rgba(var(--accent-rgb), 0.04) 19px
+    ),
+    repeating-linear-gradient(
+      -35deg,
+      transparent 0px,
+      transparent 42px,
+      rgba(var(--gold-rgb), 0.025) 42px,
+      rgba(var(--gold-rgb), 0.025) 43px
+    ),
+    radial-gradient(ellipse 70% 50% at 40% 45%, rgba(var(--accent-rgb), 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 65% 55%, rgba(var(--gold-rgb), 0.04) 0%, transparent 65%);
+  background-size: 200px 200px, 300px 300px, 100% 100%, 100% 100%;
+  animation: site-bg-drift 60s linear infinite;
 }
