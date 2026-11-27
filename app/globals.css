@@ -1,94 +1,113 @@
-/* app/globals.css */
+/* app/globals.css
+ *
+ * Revamp — "twisted minimalism, a pinch of maximalism".
+ * Quiet luxury rules, from the research: generous negative space, editorial
+ * type, hairline rules instead of borders and glow, one accent used rarely,
+ * slow dissolves, never movement for its own sake. The single maximalist
+ * moment is the hero name; everything else stays quiet.
+ *
+ * Palette: warm paper / near-black ink, ONE accent (blue). Gold appears
+ * exactly once — the full stop after the hero name. No indigo, no purple,
+ * no multi-colour gradients, no glow-everywhere.
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Light theme (default) — warm paper ─────────────────────────────── */
 :root {
-  --void: #06080E;
-  --void-rgb: 6, 8, 14;
-  --abyss: #0C1220;
-  --surface: #111B2E;
-  --surface-rgb: 17, 27, 46;
-  --ink: #FAF6ED;
-  --ink-rgb: 250, 246, 237;
-  --frost: #C1D1E6;
-  --accent: #254E91;
-  --accent-rgb: 37, 78, 145;
-  --gold: #C9A84C;
-  --gold-rgb: 201, 168, 76;
-  --border: #1C2D4A;
-  --border-rgb: 28, 45, 74;
-  --glow: rgba(37, 78, 145, 0.25);
-  --bg-wave-1: #254E91;
-  --bg-wave-2: #C9A84C;
-  --bg-wave-3: #6366F1;
+  --void: #faf8f2;
+  --void-rgb: 250, 248, 242;
+  --abyss: #f1ede3;
+  --surface: #ffffff;
+  --surface-rgb: 255, 255, 255;
+  --ink: #16181d;
+  --ink-rgb: 22, 24, 29;
+  --frost: #5b6068;
+  --accent: #1d4e9e;
+  --accent-rgb: 29, 78, 158;
+  --accent-ink: #1d4e9e;
+  --gold: #8a6d2b;
+  --gold-rgb: 138, 109, 43;
+  --border: #e2dcd0;
+  --border-rgb: 226, 220, 208;
+  --glow: rgba(29, 78, 158, 0.08);
+  /* Background waves: one colour only — blue, in three tints of itself. */
+  --bg-wave-1: #1d4e9e;
+  --bg-wave-2: #1d4e9e;
+  --bg-wave-3: #1d4e9e;
+  --wave-brightness: 0.07;
 }
 
+/* ─── Dark theme (default look) — near-black, same single accent ─────── */
 .dark {
-  --void: #06080E;
-  --void-rgb: 6, 8, 14;
-  --abyss: #0C1220;
-  --surface: #111B2E;
-  --surface-rgb: 17, 27, 46;
-  --ink: #FAF6ED;
-  --ink-rgb: 250, 246, 237;
-  --frost: #C1D1E6;
-  --accent: #254E91;
+  --void: #07090f;
+  --void-rgb: 7, 9, 15;
+  --abyss: #0c1220;
+  --surface: #101828;
+  --surface-rgb: 16, 24, 40;
+  --ink: #f6f1e7;
+  --ink-rgb: 246, 241, 231;
+  --frost: #a8b4c4;
+  --accent: #254e91;
   --accent-rgb: 37, 78, 145;
-  --gold: #C9A84C;
+  --accent-ink: #8fb0e8;
+  --gold: #c9a84c;
   --gold-rgb: 201, 168, 76;
-  --border: #1C2D4A;
-  --border-rgb: 28, 45, 74;
-  --glow: rgba(37, 78, 145, 0.25);
-  --bg-wave-1: #254E91;
-  --bg-wave-2: #C9A84C;
-  --bg-wave-3: #6366F1;
+  --border: #1e2a44;
+  --border-rgb: 30, 42, 68;
+  --glow: rgba(37, 78, 145, 0.12);
+  --bg-wave-1: #254e91;
+  --bg-wave-2: #254e91;
+  --bg-wave-3: #254e91;
+  --wave-brightness: 0.1;
 }
 
 @layer utilities {
-  .glow-card {
-    border: 1px solid var(--border);
-    box-shadow: 0 0 30px var(--glow);
+  /* Quiet card: flat surface, one hairline, no glow, no glass, no blur.
+     Hover does one small thing — the border turns accent and it lifts 2px. */
+  .card-quiet {
     background: var(--surface);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition:
+      border-color 0.3s ease,
+      transform 0.3s ease;
   }
-  
-  .glow-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: inherit;
-    z-index: 1;
-  }
-  
-  .glow-card:hover {
-    box-shadow: 0 0 45px var(--glow), inset 0 0 20px rgba(255, 255, 255, 0.05);
+
+  .card-quiet:hover {
     border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* Kept for compatibility with components that still use it: now the same
+     quiet surface — no glow, no inner rim. */
+  .glow-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition:
+      border-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .glow-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
   }
 
   .glass {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    background: rgba(var(--surface-rgb), 0.45);
+    background: rgb(var(--surface-rgb) / 0.82);
     border: 1px solid var(--border);
   }
 
-  .gradient-text {
-    background: linear-gradient(135deg, var(--ink) 0%, var(--accent) 50%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(0,0,0,0.65));
-    contain: layout style paint;
-  }
-
-  .text-liquid-pop {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95), 0 0 15px rgba(0, 0, 0, 0.6);
+  /* The one serif voice: Instrument Serif italic, used for the hero name
+     ("Ahmed") and nowhere else as a system. */
+  .display-serif {
+    font-family: var(--font-serif-display), 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
   }
 
   .btn-primary {
@@ -97,18 +116,19 @@
     border-radius: 9999px;
     padding: 12px 28px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 14px 0 rgba(var(--accent-rgb), 0.2);
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     cursor: pointer;
   }
-  
+
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 30px var(--glow), 0 6px 20px 0 rgba(var(--accent-rgb), 0.3);
-    opacity: 0.95;
+    opacity: 0.94;
   }
 
   .btn-ghost {
@@ -116,129 +136,113 @@
     border-radius: 9999px;
     padding: 12px 28px;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition:
+      border-color 0.25s ease,
+      color 0.25s ease,
+      transform 0.25s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     cursor: pointer;
     background: transparent;
     color: var(--ink);
   }
-  
+
   .btn-ghost:hover {
     border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.04);
+    color: var(--accent-ink);
+    transform: translateY(-2px);
   }
 
+  /* Section label: small, letterspaced, numbered — "01 — Who I am". */
   .section-label {
     font-size: 11px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--frost);
     font-family: var(--font-syne), 'Syne', sans-serif;
     font-weight: 700;
   }
 
-  .mesh-bg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    background: radial-gradient(circle at 80% 20%, rgba(var(--accent-rgb), 0.15) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(201, 168, 76, 0.1) 0%, transparent 40%);
-  }
-
-  .floating-element {
-    position: absolute;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 400px;
-    height: 400px;
-    top: 10%;
-    right: -5%;
-    opacity: 0.2;
-    pointer-events: none;
+  /* Section rule: a short solid accent bar, then a hairline. No gradient. */
+  .rule-accent {
+    height: 2px;
+    width: 48px;
+    background: var(--accent);
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+/* Anchor scrolling: the floating nav pill is ~64px tall; without this,
+   scrollIntoView lands section headings underneath it (seen live on
+   Projects and Education). 120px clears the pill on every viewport. */
+html {
+  scroll-padding-top: 120px;
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
+/* ─── Navbar pill — theme-aware, no white glass gradients, no sweep ──── */
+/* Live review: the old pill was transparent, so bright shader bands washed
+   out "Contact", the hamburger and the thin logo (white-on-white). This
+   pill is near-opaque (0.94) with a soft shadow, so text stays readable
+   over any background. */
+.navbar-pill {
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  padding: 8px 16px;
+  background: rgb(var(--surface-rgb) / 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgb(var(--ink-rgb) / 0.08);
+  transition:
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+  will-change: transform;
 }
 
-@keyframes warm-breathe {
-  0%, 100% {
-    box-shadow:
-      0 0 0 1px rgba(245, 158, 11, 0.55),
-      0 0 14px 2px rgba(245, 158, 11, 0.25),
-      0 0 28px 4px rgba(245, 158, 11, 0.10),
-      inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75),
-      inset 0 -1px 1px 0 rgba(255, 255, 255, 0.2);
-    border-color: rgba(245, 158, 11, 0.55);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1.5px rgba(251, 191, 36, 0.9),
-      0 0 22px 6px rgba(245, 158, 11, 0.45),
-      0 0 42px 8px rgba(245, 158, 11, 0.20),
-      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 1px 0 rgba(255, 255, 255, 0.3);
-    border-color: rgba(251, 191, 36, 0.95);
-  }
+.navbar-pill[data-scrolled='true'] {
+  border-color: var(--accent);
 }
 
-.warm-breathe-glow {
-  animation: warm-breathe 3.2s ease-in-out infinite;
-  border: 1px solid rgba(245, 158, 11, 0.55);
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-  isolation: isolate;
-  will-change: box-shadow;
-}
-
-.warm-breathe-glow:hover {
-  animation-duration: 2s;
-  box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 1),
-    0 0 26px 8px rgba(245, 158, 11, 0.6),
-    0 0 52px 12px rgba(245, 158, 11, 0.3),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.35);
-  border-color: rgba(251, 191, 36, 1);
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
+@media (min-width: 768px) {
+  .navbar-pill {
+    width: 720px;
+    padding: 14px 28px;
   }
-  100% {
-    background-position: 200% 0;
+  .navbar-pill[data-scrolled='true'] {
+    width: 560px;
+    padding: 8px 20px;
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.navbar-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+/* ─── Accessibility: respect prefers-reduced-motion ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Thin adaptive custom scrollbar */
+/* ─── Mobile: keep it flat and cheap ──────────────────────────────────── */
+@media (max-width: 767px) {
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(var(--surface-rgb) / 0.92);
+  }
+}
+
+/* ─── Thin adaptive custom scrollbar ──────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -258,7 +262,8 @@
 }
 
 /* Lenis Smooth Scroll CSS */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -278,127 +283,7 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* ─── Navbar CSS-Driven Scroll Shrink ──────────────────────────────────────────
-   Replaces Framer Motion scroll animation — zero JS overhead, pure compositor.
-   Toggled by data-scrolled="true/false" attribute set via a passive scroll listener.
-   ────────────────────────────────────────────────────────────────────────────── */
-.navbar-pill {
-  transform: translateX(-50%);
-  width: calc(100% - 2rem);
-  padding: 8px 16px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(245, 158, 11, 0.03) 75%, rgba(255, 255, 255, 0.08) 100%);
-  backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
-  -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.35),
-    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75),
-    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.18);
-  transition:
-    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
-  will-change: transform; /* already on its own compositor layer due to position:fixed */
-}
-
-.navbar-pill[data-scrolled="true"] {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(14, 18, 28, 0.65) 50%, rgba(245, 158, 11, 0.05) 80%, rgba(255, 255, 255, 0.10) 100%);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow:
-    0 16px 40px -10px rgba(0, 0, 0, 0.5),
-    0 0 24px 2px rgba(245, 158, 11, 0.18),
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-@media (min-width: 768px) {
-  .navbar-pill {
-    width: 720px;
-    padding: 14px 28px;
-  }
-  .navbar-pill[data-scrolled="true"] {
-    width: 560px;
-    padding: 8px 20px;
-  }
-}
-
-.navbar-blur {
-  backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
-  -webkit-backdrop-filter: blur(16px) saturate(190%) brightness(1.15) contrast(102%);
-}
-
-/* ─── GPU Compositor Hints ────────────────────────────────────────────────── */
-/* Only promote elements that ACTUALLY animate on the compositor */
-.btn-primary,
-.btn-ghost {
-  will-change: transform;
-}
-
-/* ─── Navbar CSS sweep animation — replaces Framer Motion infinite loop ──── */
-@keyframes navbar-sweep {
-  0%   { transform: translateX(-150%) skewX(12deg); }
-  100% { transform: translateX(350%) skewX(12deg); }
-}
-
-.navbar-sweep {
-  animation: navbar-sweep 5s ease-in-out 0.5s infinite;
-  will-change: transform;
-}
-
-/* ─── Accessibility: Respect prefers-reduced-motion ──────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .animate-float,
-  .animate-pulse-glow {
-    animation: none !important;
-  }
-}
-
-/* ─── Mobile: Disable heavy GPU effects and running animations ───────────── */
-@media (max-width: 767px) {
-  .glass {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(var(--surface-rgb), 0.85);
-  }
-
-  /* Reduce shadow complexity on mobile */
-  .glow-card {
-    box-shadow: 0 2px 8px rgba(var(--ink-rgb), 0.06);
-  }
-
-  .glow-card:hover {
-    box-shadow: 0 4px 16px rgba(var(--ink-rgb), 0.1);
-  }
-
-  /* Stop all running CSS animations on mobile to save GPU */
-  .animate-float,
-  .animate-pulse-glow,
-  .navbar-sweep {
-    animation: none !important;
-  }
-}
-
-/* ─── Project Card: perspective set in CSS (not inline) to avoid recalcs ─── */
-.project-card-perspective {
-  perspective: 1000px;
-  transform-style: preserve-3d;
-}
-
-/* ─── Profile Card: Mobile Touch-Through Scrolling ──────────────────────────
-   On touchscreen devices (smartphones/tablets), let all touch gestures pass directly
-   through the image card to the page scroller so swiping scrolls the website instantly.
-   Only the interactive "Get in Touch" button captures tap/click. ─────────────────── */
+/* ─── Profile Card: Mobile Touch-Through Scrolling ────────────────────── */
 @media (hover: none) and (pointer: coarse) {
   .profile-card-touch-scroll,
   .profile-card-touch-scroll section,

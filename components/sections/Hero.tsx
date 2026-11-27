@@ -2,47 +2,46 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Magnetic from '@/components/animations/Magnetic';
-import GlassSurface from '@/components/ui/GlassSurface';
 import { ArrowUpRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 
 const LiquidMetal = dynamic(
   () => import('@paper-design/shaders-react').then((mod) => mod.LiquidMetal),
   { ssr: false }
 );
 
+/*
+ * Hero — the ONE maximalist moment on the site.
+ * Editorial, left-aligned: a hairline meta row, then the name set huge —
+ * "SHABAB" in Syne, "Ahmed" in italic Instrument Serif — with a single
+ * gold full stop. Everything else on the page stays quiet.
+ * The liquid-metal shader is dark-mode only, never on touch devices, and
+ * never when the visitor prefers reduced motion. In light mode the hero
+ * is just paper, type and a hairline — which is the point.
+ */
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
   const [presets, setPresets] = useState<any[] | null>(null);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [shaderVisible, setShaderVisible] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [allowShader, setAllowShader] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
     const isTouch = navigator.maxTouchPoints > 0;
-    setIsTouchDevice(isTouch);
-
-    // Load the LiquidMetal shader for all devices
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Shader only on a fine pointer, with motion allowed. Touch and
+    // reduced-motion visitors get the still, editorial hero instead.
+    setAllowShader(!isTouch && !reduced);
     import('@paper-design/shaders-react').then((mod) => {
       setPresets(mod.liquidMetalPresets);
     });
   }, []);
 
-  // Listen for mobile menu open/close to immediately halt WebGL render loop and free GPU
-  useEffect(() => {
-    const handleMenu = (e: Event) => {
-      const custom = e as CustomEvent<{ open: boolean }>;
-      setIsMenuOpen(Boolean(custom.detail?.open));
-    };
-    window.addEventListener('portfolio:menu-toggle', handleMenu);
-    return () => window.removeEventListener('portfolio:menu-toggle', handleMenu);
-  }, []);
-
-  // Pause the shader when the Hero section is scrolled completely out of view
+  // Pause the shader when the Hero section is scrolled out of view.
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
@@ -62,179 +61,133 @@ export default function Hero() {
     }
   };
 
-  const themeBack = '#06080E';
-  const themeTint = '#32528C';
-
-  // Base speed is 0.6; always live and animated across all refresh rates (60/90/120 Hz)
-  const baseSpeed = presets?.[2]?.params?.speed ?? 0.6;
-  const shaderSpeed = isMenuOpen ? 0 : baseSpeed;
-
-  // Optimized WebGL context: minimal buffer config for a decorative background shader
-  const webGlAttributes = useMemo<WebGLContextAttributes>(
-    () => ({
-      powerPreference: 'high-performance',
-      alpha: false,
-      depth: false,
-      stencil: false,
-      antialias: false,
-    }),
-    []
-  );
+  const showShader = mounted && allowShader && resolvedTheme === 'dark' && presets && shaderVisible;
+  const shaderSpeed = presets?.[2]?.params?.speed ?? 0.6;
 
   return (
     <section
       ref={heroRef}
       id="hero"
-      className="relative w-full min-h-[100svh] md:min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-16 md:pt-20 md:pb-12 overflow-x-hidden bg-transparent touch-pan-y"
-      style={{ touchAction: 'pan-y' }}
+      className="relative w-full min-h-[100svh] flex flex-col justify-center overflow-x-hidden bg-transparent"
     >
-      {/* Liquid Metal Shader — always live, high-performance desynchronized WebGL for 60/90/120Hz */}
-      <div
-        id="hero-canvas-container"
-        className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
-        style={{ isolation: 'isolate', transform: 'translateZ(0)', contain: 'layout paint' }}
-      >
-        {/* Render on all devices when in viewport with continuous live fluid motion */}
-        {presets && shaderVisible && (
+      {/* Liquid Metal Shader — dark mode, desktop, motion allowed only. */}
+      {showShader && (
+        <div
+          id="hero-canvas-container"
+          className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
+          style={{ isolation: 'isolate', transform: 'translateZ(0)', contain: 'layout paint' }}
+          aria-hidden="true"
+        >
           <LiquidMetal
             {...(presets[2]?.params || presets[2] || {})}
             shape="none"
             fit="cover"
-            scale={isTouchDevice ? 1.65 : 1.95}
+            scale={1.95}
             speed={shaderSpeed}
-            colorBack={themeBack}
-            colorTint={themeTint}
+            colorBack="#07090F"
+            colorTint="#2E5AAC"
             style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
             minPixelRatio={1}
-            maxPixelCount={isTouchDevice ? 380000 : 1600000}
-            webGlContextAttributes={webGlAttributes}
+            maxPixelCount={1600000}
+            webGlContextAttributes={{
+              powerPreference: 'high-performance',
+              alpha: false,
+              depth: false,
+              stencil: false,
+              antialias: false,
+            }}
           />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-65% to-void/90 pointer-events-none z-[1]" />
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-65% to-void/90 pointer-events-none z-[1]" />
+          {/*
+            Soft veil over the shader: live, the moving black/white/blue/
+            cyan/yellow/red bands passed behind the headline and buttons
+            and changed their fill and fringe as they moved. The veil
+            tames the bands; the solid-ink headline and opaque buttons
+            sit above it, so nothing fringes anymore.
+          */}
+          <div className="absolute inset-0 bg-void/45 pointer-events-none z-[2]" aria-hidden="true" />
+        </div>
+      )}
 
-      {/* Subtle grid texture */}
-      <div className="absolute inset-0 pointer-events-none z-1 bg-[linear-gradient(to_right,rgba(var(--accent-rgb),0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--accent-rgb),0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-
-      {/* Hero Content */}
-      <div
-        className="relative z-10 flex flex-col items-center text-center max-w-4xl px-5 sm:px-6 md:px-8 pt-2 pb-6 md:pt-2 md:pb-8 gap-5 sm:gap-6 md:gap-6 select-none touch-pan-y"
-        style={{ touchAction: 'pan-y' }}
-      >
-        {/* Main Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="font-syne tracking-tighter leading-none relative z-20 pointer-events-none"
-          style={{ fontSize: 'clamp(40px, 8.5vw, 96px)' }}
+      {/* Hero Content — editorial, left-aligned, one column of type */}
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 sm:px-8 pt-32 pb-20 md:pt-36 md:pb-24">
+        {/* Meta row — hairline above, small caps below */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="border-t border-border pt-5 mb-10 md:mb-14 flex flex-wrap gap-x-8 gap-y-2"
         >
-          <span className="gradient-text uppercase font-extrabold block">
-            Shabab Ahmed
+          <span className="section-label">Shabab Ahmed — Portfolio</span>
+          <span className="section-label">Dhaka, Bangladesh</span>
+          <span className="section-label">Software Developer &amp; Builder</span>
+        </motion.div>
+
+        {/* The name — the single maximalist moment */}
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="leading-[0.9] tracking-tight"
+        >
+          <span
+            className="font-syne font-extrabold uppercase text-ink block"
+            style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
+          >
+            Shabab
+          </span>
+          <span
+            className="display-serif text-accent-ink block"
+            style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
+          >
+            Ahmed<span className="text-gold">.</span>
           </span>
         </motion.h1>
 
         {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="font-dmSans font-normal tracking-tight text-frost text-liquid-pop"
-          style={{ fontSize: 'clamp(18px, 4.2vw, 26px)' }}
+          transition={{ duration: 0.8, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="font-dmSans font-medium text-ink mt-10 md:mt-12 max-w-[560px]"
+          style={{ fontSize: 'clamp(20px, 3.4vw, 28px)', lineHeight: 1.35 }}
         >
           I speak to AI. It builds. We ship.
         </motion.p>
 
-        {/* Sub-tagline */}
         <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.7 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-          className="font-dmSans font-normal text-frost max-w-[520px] leading-relaxed text-liquid-pop"
-          style={{ fontSize: 'clamp(14px, 3.2vw, 16px)' }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="font-dmSans text-frost max-w-[520px] leading-relaxed mt-4"
+          style={{ fontSize: 'clamp(15px, 2.4vw, 17px)' }}
         >
           Turning ideas into real products — one conversation at a time.
         </motion.p>
 
-        {/* CTA Buttons — expanded touch targets on mobile, perfectly framed & visible on desktop */}
+        {/* CTAs — one solid, one hairline. No glass, no breathing glow. */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-row gap-3.5 sm:gap-4 justify-center items-center mt-5 sm:mt-5 md:mt-4 w-full max-w-sm sm:max-w-none sm:w-auto px-1 sm:px-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.75 }}
+          className="flex flex-wrap gap-3 mt-10 md:mt-12"
         >
-          <Magnetic className="flex-1 sm:flex-initial">
-            <button
-              onClick={() => handleScrollTo('projects')}
-              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
-              aria-label="See My Work"
-            >
-              <GlassSurface
-                displace={0.6}
-                distortionScale={270}
-                redOffset={10}
-                greenOffset={14}
-                blueOffset={2}
-                brightness={45}
-                opacity={0.43}
-                mixBlendMode="screen"
-                borderRadius={9999}
-                className="warm-breathe-glow px-6 sm:px-7 py-3 h-[52px] sm:h-12 w-full sm:w-auto min-w-[150px] sm:min-w-[165px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
-              >
-                <div className="flex items-center justify-center gap-2.5">
-                  {/* Precise warm light breathing beacon */}
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
-                  </span>
-
-                  {/* Button text with precision typography */}
-                  <span className="font-dmSans font-semibold text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
-                    See My Work
-                  </span>
-
-                  {/* Precision warm micro-arrow */}
-                  <ArrowUpRight className="w-4 h-4 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
-                </div>
-              </GlassSurface>
-            </button>
-          </Magnetic>
-          <Magnetic className="flex-1 sm:flex-initial">
-            <button
-              onClick={() => handleScrollTo('contact')}
-              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
-              aria-label="Get in Touch"
-            >
-              <GlassSurface
-                displace={0.6}
-                distortionScale={270}
-                redOffset={10}
-                greenOffset={14}
-                blueOffset={2}
-                brightness={45}
-                opacity={0.43}
-                mixBlendMode="screen"
-                borderRadius={9999}
-                className="warm-breathe-glow px-6 sm:px-7 py-3 h-[52px] sm:h-12 w-full sm:w-auto min-w-[150px] sm:min-w-[165px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
-              >
-                <div className="flex items-center justify-center gap-2.5">
-                  {/* Precise warm light breathing beacon */}
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
-                  </span>
-
-                  {/* Button text with precision typography */}
-                  <span className="font-dmSans font-semibold text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
-                    Get in Touch
-                  </span>
-
-                  {/* Precision warm micro-arrow */}
-                  <ArrowUpRight className="w-4 h-4 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
-                </div>
-              </GlassSurface>
-            </button>
-          </Magnetic>
+          <button
+            onClick={() => handleScrollTo('projects')}
+            className="btn-primary"
+            aria-label="See My Work"
+          >
+            See My Work
+            <ArrowUpRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => handleScrollTo('contact')}
+            className="btn-ghost"
+            aria-label="Get in Touch"
+          >
+            Get in Touch
+            <ArrowUpRight className="w-4 h-4" />
+          </button>
         </motion.div>
       </div>
     </section>

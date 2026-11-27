@@ -20,15 +20,17 @@ export function useLineWavesColors() {
 }
 
 export function LineWavesColorProvider({ children }: { children: React.ReactNode }) {
+  // One colour only: blue. The old indigo (#6366F1) and gold (#C9A84C)
+  // waves competed with the accent; the background is now a single blue
+  // line field, faint enough to sit behind the content.
   const [colors, setColors] = useState<LineWavesColors>({
     color1: '#254E91',
-    color2: '#C9A84C',
-    color3: '#6366F1',
-    brightness: 0.12,
+    color2: '#254E91',
+    color3: '#254E91',
+    brightness: 0.1,
   });
 
   useEffect(() => {
-    // Helper function to extract CSS variable colors
     const getCSSVar = (name: string, fallback: string) => {
       const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
       return val || fallback;
@@ -36,9 +38,9 @@ export function LineWavesColorProvider({ children }: { children: React.ReactNode
 
     setColors({
       color1: getCSSVar('--bg-wave-1', '#254E91'),
-      color2: getCSSVar('--bg-wave-2', '#C9A84C'),
-      color3: getCSSVar('--bg-wave-3', '#6366F1'),
-      brightness: 0.12,
+      color2: getCSSVar('--bg-wave-2', '#254E91'),
+      color3: getCSSVar('--bg-wave-3', '#254E91'),
+      brightness: 0.1,
     });
   }, []);
 
