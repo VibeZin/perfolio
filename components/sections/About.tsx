@@ -2,9 +2,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import SpotlightCard from '../ui/SpotlightCard';
 
-// Copy unchanged. Presentation only: numbered section label, solid accent
-// rule instead of the accent-to-gold gradient, wider editorial container.
 export default function About() {
   const interests = [
     'Machine Learning & Systems',
@@ -58,7 +57,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="py-28 md:py-40 px-6 max-w-[1200px] mx-auto w-full relative z-10 scroll-mt-24 select-none"
+      className="py-[120px] px-6 max-w-[1100px] mx-auto w-full relative z-10 scroll-mt-24 select-none"
     >
       <motion.div
         initial="hidden"
@@ -69,11 +68,11 @@ export default function About() {
       >
         {/* Top Header */}
         <motion.div variants={titleVariants} className="flex flex-col gap-4 items-start">
-          <span className="section-label">01 — Who I am</span>
+          <span className="section-label">WHO I AM</span>
           <h2 className="font-syne font-bold leading-tight tracking-tight text-ink" style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}>
             Just a student who builds things.
           </h2>
-          <div className="rule-accent" />
+          <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold" />
         </motion.div>
 
         {/* Two Column Layout */}
@@ -88,18 +87,19 @@ export default function About() {
               Doing my BBA at University of Asia Pacific, Dhaka. Currently in my second semester.
             </p>
             <p>
-              Outside class, I spend most of my time building products — apps, websites, tools. I don&apos;t write code myself. I describe what I need to AI in detail, it handles the technical side, and I keep directing until it works the way I imagined. That process is called vibe coding.
+              Outside class, I spend most of my time building products — apps, websites, tools. I don't write code myself. I describe what I need to AI in detail, it handles the technical side, and I keep directing until it works the way I imagined. That process is called vibe coding.
             </p>
-            <p className="italic text-frost/90 border-l-2 border-border pl-4 mt-2">
-              I&apos;m genuinely interested in AI, business, tech, and where all three are heading. Still learning. Always building.
+            <p className="italic text-frost/90 border-l-2 border-border/60 pl-4 mt-2">
+              I'm genuinely interested in AI, business, tech, and where all three are heading. Still learning. Always building.
             </p>
           </motion.div>
 
           {/* Right Column: Interests */}
           <motion.div variants={itemRightVariants} className="lg:col-span-5 flex flex-col gap-8">
+            {/* Interest Chips */}
             <div className="flex flex-col gap-4">
               <span className="font-syne font-bold text-xs text-frost/70 uppercase tracking-[0.15em]">
-                Obsessions &amp; Focus Areas
+                Obsessions & Focus Areas
               </span>
               <div className="flex flex-wrap gap-2.5">
                 {interests.map((interest) => (
