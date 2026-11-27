@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X, Instagram, Facebook, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from '@/components/layout/ThemeToggle';
+
 export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -40,13 +42,11 @@ export default function Navbar() {
     }
     setMenuOrigin({ x, y });
 
-    // Calculate exact scale factor needed to cover the entire screen from (x, y)
     if (typeof window !== 'undefined') {
       const maxCornerDist = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y)
       );
-      // Base circle radius is 28px (diameter 56px). Add 12% safety margin to ensure full coverage
       const targetScale = Math.ceil((maxCornerDist / 28) * 1.12);
       setBubbleScale(targetScale);
     }
@@ -60,10 +60,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  // ─── Scroll shrink via CSS data-attribute ─────────────────────────────────
-  // Instead of running Framer Motion tween every scroll event (which triggers
-  // a React re-render + new animation), we flip a data-attribute on the <nav>
-  // and let CSS transitions handle the visual change — zero JS overhead.
+  // Scroll shrink via CSS data-attribute — no JS animation, no re-renders.
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
@@ -82,7 +79,6 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  // ─────────────────────────────────────────────────────────────────────────
 
   // Intersection Observer to highlight active sections on scroll
   useEffect(() => {
@@ -159,8 +155,6 @@ export default function Navbar() {
     }
   }, [mobileMenuOpen]);
 
-  const bgSolid = '#06080E';
-
   const linkContainerVariants: any = {
     hidden: { opacity: 0 },
     visible: {
@@ -200,31 +194,17 @@ export default function Navbar() {
     },
   };
 
+  const socialButton =
+    'w-12 h-12 shrink-0 rounded-full border border-border flex items-center justify-center text-frost hover:text-accent-ink hover:border-accent transition-all duration-200';
+
   return (
     <>
-      {/*
-       * CSS-driven navbar shrink — no JS animation, no re-renders.
-       * data-scrolled="true"  → compact pill styles via CSS
-       * data-scrolled="false" → expanded pill styles via CSS
-       */}
       <nav
         ref={navRef}
         id="main-navbar"
         data-scrolled="false"
         className="navbar-pill fixed top-4 md:top-6 left-1/2 z-50 rounded-full border flex items-center justify-between overflow-hidden navbar-blur"
       >
-        {/* Liquid Glass Highlight Sweep — CSS only, zero JS overhead */}
-        <div className="absolute inset-0 rounded-full pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
-          <div className="navbar-sweep w-2/3 h-full bg-gradient-to-r from-transparent via-white/18 to-transparent skew-x-12" />
-        </div>
-        {/* Top Specular Rim along the navbar pill curve */}
-        <div
-          className="absolute inset-x-8 top-0 h-[1px] pointer-events-none z-10"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.75) 50%, transparent 100%)',
-          }}
-        />
-
         {/* Left Side: Logo */}
         <a
           id="navbar-logo"
@@ -236,7 +216,7 @@ export default function Navbar() {
           <img
             src="/logo.png"
             alt="Shabab Ahmed"
-            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_12px_rgba(255,255,255,0.18)]"
+            className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </a>
 
@@ -250,7 +230,7 @@ export default function Navbar() {
                 href={`#${link.id}`}
                 onClick={(e) => handleLinkClick(e, link.id)}
                 className={`font-dmSans font-medium text-sm transition-colors duration-200 relative py-1 ${
-                  isActive ? 'text-accent' : 'text-frost hover:text-ink'
+                  isActive ? 'text-accent-ink' : 'text-frost hover:text-ink'
                 }`}
               >
                 {link.label}
@@ -266,24 +246,24 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Right Side: Hamburger Menu */}
-        <div className="flex items-center">
+        {/* Right Side: Theme Toggle + Hamburger */}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
 
-          {/* Hamburger Menu Icon — pure liquid glassmorphic button */}
           <button
             id="mobile-menu-toggle"
             ref={menuButtonRef}
             onClick={handleOpenMenu}
             style={{ touchAction: 'manipulation' }}
-            className="flex items-center justify-center w-10 h-10 -mr-1 text-frost hover:text-ink cursor-pointer active:scale-95 transition-all rounded-full border border-white/20 bg-gradient-to-br from-white/14 via-white/[0.03] to-white/[0.08] backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:border-amber-400/60 hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]"
+            className="flex items-center justify-center w-10 h-10 -mr-1 text-frost hover:text-ink cursor-pointer active:scale-95 transition-all rounded-full border border-border hover:border-accent"
             aria-label="Open navigation menu"
           >
-            <Menu className="w-5 h-5 text-frost hover:text-amber-400 transition-colors" />
+            <Menu className="w-5 h-5" />
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu Bubble Overlay — Ultra-Fast Compositor Scaled 56px Circle */}
+      {/* Mobile Menu Bubble Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -294,20 +274,19 @@ export default function Navbar() {
             className="fixed inset-0 z-[100] overflow-hidden select-none"
             style={{ touchAction: 'none' }}
           >
-            {/* 1. Fluid Expanding Bubble from Button Center — Featherlight 56px Base GPU Element */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: bubbleScale }}
               exit={{
                 scale: 0,
                 transition: {
-                  duration: 0.30,
-                  ease: [0.32, 0, 0.67, 0], // Material 3 Emphasized Accelerate into button
+                  duration: 0.3,
+                  ease: [0.32, 0, 0.67, 0],
                 },
               }}
               transition={{
                 duration: 0.38,
-                ease: [0.22, 1, 0.36, 1], // Material 3 Emphasized Decelerate (snappy touch response + fluid glide)
+                ease: [0.22, 1, 0.36, 1],
               }}
               style={{
                 position: 'fixed',
@@ -316,7 +295,7 @@ export default function Navbar() {
                 width: 56,
                 height: 56,
                 borderRadius: '50%',
-                backgroundColor: bgSolid,
+                backgroundColor: 'var(--void)',
                 willChange: 'transform',
                 transformOrigin: '28px 28px',
                 pointerEvents: 'none',
@@ -325,20 +304,6 @@ export default function Navbar() {
               }}
             />
 
-            {/* 2. Static Ambient Luxury Gradient — Fades in smoothly with zero GPU scale load */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.12 } }}
-              transition={{ duration: 0.28, delay: 0.08 }}
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(ellipse at 50% 45%, rgba(var(--accent-rgb), 0.15) 0%, transparent 68%)',
-              }}
-            />
-
-            {/* 3. Menu Content (Links, Close Button, Socials) */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -347,7 +312,6 @@ export default function Navbar() {
               className="relative z-10 w-full h-full flex flex-col justify-center items-center p-6"
               onClick={handleCloseMenu}
             >
-              {/* Close Button — pure liquid glassmorphic button */}
               <motion.button
                 id="mobile-menu-close"
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -359,13 +323,12 @@ export default function Navbar() {
                   handleCloseMenu();
                 }}
                 style={{ touchAction: 'manipulation' }}
-                className="absolute top-6 right-6 sm:top-8 sm:right-8 w-12 h-12 flex items-center justify-center text-frost hover:text-amber-400 cursor-pointer rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl active:scale-90 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)]"
+                className="absolute top-6 right-6 sm:top-8 sm:right-8 w-12 h-12 flex items-center justify-center text-frost hover:text-ink cursor-pointer rounded-full border border-border active:scale-90 transition-all"
                 aria-label="Close navigation menu"
               >
                 <X className="w-6 h-6" />
               </motion.button>
 
-              {/* Centered Navigation Links with Staggered Cascading Reveal */}
               <motion.div
                 variants={linkContainerVariants}
                 initial="hidden"
@@ -381,9 +344,9 @@ export default function Navbar() {
                       <a
                         href={`#${link.id}`}
                         onClick={(e) => handleLinkClick(e, link.id)}
-                        className={`font-syne font-bold text-3xl sm:text-4xl tracking-tight block py-3.5 px-6 rounded-2xl transition-all duration-200 relative ${
+                        className={`font-syne font-bold text-3xl sm:text-4xl tracking-tight block py-3.5 px-6 rounded transition-all duration-200 relative ${
                           isActive
-                            ? 'text-accent bg-accent/10 border border-accent/25 shadow-[0_0_20px_rgba(var(--accent-rgb),0.15)]'
+                            ? 'text-accent-ink bg-accent/10 border border-accent/25'
                             : 'text-frost hover:text-ink border border-transparent hover:bg-surface/10'
                         }`}
                       >
@@ -397,7 +360,6 @@ export default function Navbar() {
                 })}
               </motion.div>
 
-              {/* Bottom Socials — pure liquid glassmorphic round buttons perfectly centered */}
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -410,7 +372,7 @@ export default function Navbar() {
                   href="https://www.instagram.com/shababahmedtzn/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className={socialButton}
                   aria-label="Instagram"
                 >
                   <Instagram className="w-5 h-5 shrink-0" />
@@ -419,7 +381,7 @@ export default function Navbar() {
                   href="https://www.facebook.com/shababahmedtzn/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className={socialButton}
                   aria-label="Facebook"
                 >
                   <Facebook className="w-5 h-5 shrink-0" />
@@ -428,7 +390,7 @@ export default function Navbar() {
                   href="https://github.com/VibeZin"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 shrink-0 rounded-full border border-white/20 bg-gradient-to-br from-white/16 via-white/[0.03] to-white/[0.08] backdrop-blur-xl flex items-center justify-center text-frost hover:text-amber-400 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-1px_1px_rgba(255,255,255,0.15)] hover:scale-110 active:scale-95 transition-all duration-200"
+                  className={socialButton}
                   aria-label="GitHub"
                 >
                   <Github className="w-5 h-5 shrink-0" />
