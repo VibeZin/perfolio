@@ -14,16 +14,12 @@ const config: Config = {
       fontFamily: {
         syne: ['var(--font-syne)', 'Syne', 'sans-serif'],
         dmSans: ['var(--font-dm-sans)', 'DM Sans', 'sans-serif'],
-        // Instrument Serif italic — the hero name's serif voice, used once.
-        serifDisplay: ['var(--font-serif-display)', 'Instrument Serif', 'Georgia', 'serif'],
       },
       colors: {
         void: 'rgb(var(--void-rgb) / <alpha-value>)',
         abyss: 'var(--abyss)',
         surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
         accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
-        // Text-safe accent: darker blue on light, lighter blue on dark.
-        'accent-ink': 'var(--accent-ink)',
         gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
         ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
         frost: 'var(--frost)',
@@ -31,13 +27,13 @@ const config: Config = {
       },
       borderRadius: {
         capsule: '9999px',
-        card: '4px',
-        cardSm: '4px',
+        card: '28px',
+        cardSm: '16px',
       },
       boxShadow: {
-        // One quiet blue glow, kept only for the rare places that need it.
-        glow: '0 0 30px rgba(37, 78, 145, 0.25)',
-        'glow-lg': '0 0 60px rgba(37, 78, 145, 0.2)',
+        glow: '0 0 30px rgba(124, 92, 252, 0.35)',
+        'glow-lg': '0 0 60px rgba(124, 92, 252, 0.3)',
+        'glow-gold': '0 0 30px rgba(232, 169, 54, 0.3)',
       },
     },
   },

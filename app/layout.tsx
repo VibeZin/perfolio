@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Syne, DM_Sans, Instrument_Serif } from 'next/font/google';
+import { Syne, DM_Sans } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { LineWavesColorProvider } from '@/context/LineWavesColorContext';
 
@@ -24,16 +24,6 @@ const dmSans = DM_Sans({
   display: 'swap',
 });
 
-// The single serif voice: Instrument Serif italic, used only for the hero
-// name ("Ahmed") — the one maximalist twist in an otherwise minimal site.
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['italic', 'normal'],
-  variable: '--font-serif-display',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
   title: 'Shabab Ahmed',
   description: 'Software Developer & Builder. BBA student at UAP Dhaka turning ideas into real products.',
@@ -53,9 +43,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${dmSans.variable} ${instrumentSerif.variable}`}
+    <html 
+      lang="en" 
+      className={`${syne.variable} ${dmSans.variable} bg-void dark`}
       suppressHydrationWarning
     >
       <head>
@@ -79,14 +69,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-void text-ink transition-colors duration-300 font-dmSans antialiased">
+      <body className="min-h-screen text-ink transition-colors duration-300 font-dmSans antialiased">
         <AdaptiveFavicon />
-        {/*
-          Real theme now: dark is the default look, but the visitor's system
-          preference is respected and the toggle in the navbar actually works.
-          Previously forcedTheme="dark" made the toggle dead.
-        */}
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
           <SmoothScrollProvider>
             <LineWavesColorProvider>
               <WebsiteBackground />

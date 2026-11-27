@@ -2,16 +2,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Instagram, Facebook, Github, ArrowUpRight } from 'lucide-react';
+import { Instagram, Facebook, Linkedin, Github, ArrowUpRight } from 'lucide-react';
+import Magnetic from '@/components/animations/Magnetic';
+import GlassSurface from '@/components/ui/GlassSurface';
 
-// Copy, mail address and social links unchanged. Presentation only: the
-// heading is solid ink (the old ink→blue→gold gradient text is gone),
-// the mail button is a plain solid button, and the socials are hairline
-// circles — no liquid glass, no amber breathing dots.
 export default function Contact() {
   const headingText = "Let's build something real.";
   const words = headingText.split(" ");
 
+  // Framer motion variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -56,8 +55,14 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="py-28 md:py-40 px-6 max-w-[1200px] mx-auto w-full relative z-10 scroll-mt-24 select-none flex items-center justify-center"
+      className="py-[120px] px-6 max-w-[1100px] mx-auto w-full relative z-10 scroll-mt-24 select-none flex items-center justify-center"
     >
+      {/* Ambient glow — box-shadow instead of filter:blur to avoid raster upload */}
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-[0.12] pointer-events-none"
+        style={{ boxShadow: '0 0 120px 60px rgba(var(--accent-rgb), 0.15)' }}
+      />
+
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -65,13 +70,14 @@ export default function Contact() {
         variants={containerVariants}
         className="max-w-[700px] w-full text-center flex flex-col items-center gap-8 relative z-10"
       >
+        {/* Section Label */}
         <motion.span variants={wordVariants} className="section-label">
-          05 — Get in touch
+          GET IN TOUCH
         </motion.span>
 
-        {/* Word-by-word Reveal Heading — solid ink, no gradient */}
-        <h2
-          className="font-syne font-extrabold leading-none tracking-tight text-ink text-center max-w-2xl"
+        {/* Word-by-word Reveal Heading */}
+        <h2 
+          className="font-syne font-extrabold leading-none tracking-tight text-center max-w-2xl"
           style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}
         >
           <span className="flex flex-wrap justify-center gap-x-3 gap-y-2">
@@ -79,7 +85,7 @@ export default function Contact() {
               <motion.span
                 key={i}
                 variants={wordVariants}
-                className="inline-block"
+                className="gradient-text inline-block"
               >
                 {word}
               </motion.span>
@@ -87,6 +93,7 @@ export default function Contact() {
           </span>
         </h2>
 
+        {/* Sub-text */}
         <motion.p
           variants={fadeUpVariants}
           className="font-dmSans font-normal text-lg text-frost leading-relaxed max-w-[500px] mx-auto"
@@ -94,17 +101,47 @@ export default function Contact() {
           Got a project idea, a collab offer, or just want to talk business and tech? I read everything.
         </motion.p>
 
+        {/* Main CTA Mail Button */}
         <motion.div variants={fadeUpVariants} className="mt-4 flex justify-center">
-          <a
-            href="mailto:shababahmedtazin2021@gmail.com"
-            className="btn-primary"
-            aria-label="Send Me a Mail"
-          >
-            Send Me a Mail
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
+          <Magnetic>
+            <a
+              href="mailto:shababahmedtazin2021@gmail.com"
+              className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97]"
+              aria-label="Send Me a Mail"
+            >
+              <GlassSurface
+                displace={0.6}
+                distortionScale={270}
+                redOffset={10}
+                greenOffset={14}
+                blueOffset={2}
+                brightness={45}
+                opacity={0.43}
+                mixBlendMode="screen"
+                borderRadius={9999}
+                className="warm-breathe-glow px-8 py-3.5 h-[56px] min-w-[210px] transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center"
+              >
+                <div className="flex items-center justify-center gap-2.5">
+                  {/* Precise warm light breathing beacon */}
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-80" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
+                  </span>
+
+                  {/* Button text with precision typography */}
+                  <span className="font-dmSans font-semibold text-base text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
+                    Send Me a Mail
+                  </span>
+
+                  {/* Precision warm micro-arrow */}
+                  <ArrowUpRight className="w-4 h-4 text-amber-500/85 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-amber-400" />
+                </div>
+              </GlassSurface>
+            </a>
+          </Magnetic>
         </motion.div>
 
+        {/* Social Icons Container — pure liquid glassmorphic buttons */}
         <motion.div variants={fadeUpVariants} className="flex flex-col gap-4 items-center mt-6">
           <div className="flex gap-4">
             {socialIcons.map((social) => {
@@ -115,12 +152,17 @@ export default function Contact() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.08, y: -2 }}
+                  whileHover={{ scale: 1.12, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-frost hover:text-accent-ink hover:border-accent transition-colors duration-200"
+                  className="group relative inline-flex items-center justify-center rounded-full focus:outline-none cursor-pointer select-none"
                   aria-label={social.name}
                 >
-                  <IconComp className="w-5 h-5" />
+                  <GlassSurface
+                    borderRadius={9999}
+                    className="w-12 h-12 rounded-full transition-all duration-300 group-hover:border-amber-400/60 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] flex items-center justify-center text-frost group-hover:text-amber-400"
+                  >
+                    <IconComp className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+                  </GlassSurface>
                 </motion.a>
               );
             })}
