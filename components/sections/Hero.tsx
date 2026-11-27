@@ -17,9 +17,13 @@ const LiquidMetal = dynamic(
  * Editorial, left-aligned: a hairline meta row, then the name set huge —
  * "SHABAB" in Syne, "Ahmed" in italic Instrument Serif — with a single
  * gold full stop. Everything else on the page stays quiet.
- * The liquid-metal shader is dark-mode only, never on touch devices, and
- * never when the visitor prefers reduced motion. In light mode the hero
- * is just paper, type and a hairline — which is the point.
+ * The liquid metal is now a small cube behind the name — about 340px on
+ * desktop, 240px on phones — instead of a full-screen shader. It is
+ * dark-mode only, never on touch devices, and never when the visitor
+ * prefers reduced motion. In light mode the hero is just paper, type
+ * and a hairline — which is the point. The cube runs slower, at a much
+ * lower pixel count and low-power GPU preference, so it costs a fraction
+ * of what the full-screen version did.
  */
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
@@ -62,7 +66,9 @@ export default function Hero() {
   };
 
   const showShader = mounted && allowShader && resolvedTheme === 'dark' && presets && shaderVisible;
-  const shaderSpeed = presets?.[2]?.params?.speed ?? 0.6;
+  // Slow and calm: the cube is small, so it doesn't need the
+  // full-screen preset's speed or scale.
+  const shaderSpeed = 0.35;
 
   return (
     <section
@@ -70,45 +76,6 @@ export default function Hero() {
       id="hero"
       className="relative w-full min-h-[100svh] flex flex-col justify-center overflow-x-hidden bg-transparent"
     >
-      {/* Liquid Metal Shader — dark mode, desktop, motion allowed only. */}
-      {showShader && (
-        <div
-          id="hero-canvas-container"
-          className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
-          style={{ isolation: 'isolate', transform: 'translateZ(0)', contain: 'layout paint' }}
-          aria-hidden="true"
-        >
-          <LiquidMetal
-            {...(presets[2]?.params || presets[2] || {})}
-            shape="none"
-            fit="cover"
-            scale={1.95}
-            speed={shaderSpeed}
-            colorBack="#07090F"
-            colorTint="#2E5AAC"
-            style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
-            minPixelRatio={1}
-            maxPixelCount={1600000}
-            webGlContextAttributes={{
-              powerPreference: 'high-performance',
-              alpha: false,
-              depth: false,
-              stencil: false,
-              antialias: false,
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-65% to-void/90 pointer-events-none z-[1]" />
-          {/*
-            Soft veil over the shader: live, the moving black/white/blue/
-            cyan/yellow/red bands passed behind the headline and buttons
-            and changed their fill and fringe as they moved. The veil
-            tames the bands; the solid-ink headline and opaque buttons
-            sit above it, so nothing fringes anymore.
-          */}
-          <div className="absolute inset-0 bg-void/45 pointer-events-none z-[2]" aria-hidden="true" />
-        </div>
-      )}
-
       {/* Hero Content — editorial, left-aligned, one column of type */}
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 sm:px-8 pt-32 pb-20 md:pt-36 md:pb-24">
         {/* Meta row — hairline above, small caps below */}
@@ -124,25 +91,62 @@ export default function Hero() {
         </motion.div>
 
         {/* The name — the single maximalist moment */}
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="leading-[0.9] tracking-tight"
-        >
-          <span
-            className="font-syne font-extrabold uppercase text-ink block"
-            style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
+        <div className="relative">
+          {/* Liquid-metal cube behind the name — dark mode, desktop,
+              motion allowed only. A small square, not a full screen:
+              240px on phones, 340px on desktop. */}
+          {showShader && (
+            <div
+              id="hero-canvas-container"
+              className="absolute left-1/2 top-1/2 w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] md:w-[340px] md:h-[340px] pointer-events-none z-0 overflow-hidden rounded-[4px] border border-border [&_canvas]:!absolute [&_canvas]:!inset-0 [&_canvas]:!w-full [&_canvas]:!h-full [&_canvas]:!block"
+              style={{ isolation: 'isolate', transform: 'translate(-50%, -50%) translateZ(0)', contain: 'layout paint' }}
+              aria-hidden="true"
+            >
+              <LiquidMetal
+                {...(presets[2]?.params || presets[2] || {})}
+                shape="none"
+                fit="cover"
+                scale={0.6}
+                speed={shaderSpeed}
+                colorBack="#07090F"
+                colorTint="#2E5AAC"
+                style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%' }}
+                minPixelRatio={1}
+                maxPixelCount={400000}
+                webGlContextAttributes={{
+                  powerPreference: 'low-power',
+                  alpha: false,
+                  depth: false,
+                  stencil: false,
+                  antialias: false,
+                }}
+              />
+              {/* Light veil over the cube so the name stays readable
+                  where its strokes cross the moving metal bands. */}
+              <div className="absolute inset-0 bg-void/25 pointer-events-none z-[1]" aria-hidden="true" />
+            </div>
+          )}
+
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 leading-[0.9] tracking-tight"
           >
-            Shabab
-          </span>
-          <span
-            className="display-serif text-accent-ink block"
-            style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
-          >
-            Ahmed<span className="text-gold">.</span>
-          </span>
-        </motion.h1>
+            <span
+              className="font-syne font-extrabold uppercase text-ink block"
+              style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
+            >
+              Shabab
+            </span>
+            <span
+              className="display-serif text-accent-ink block"
+              style={{ fontSize: 'clamp(64px, 13vw, 168px)' }}
+            >
+              Ahmed<span className="text-gold">.</span>
+            </span>
+          </motion.h1>
+        </div>
 
         {/* Tagline */}
         <motion.p
