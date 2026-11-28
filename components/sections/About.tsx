@@ -68,9 +68,9 @@ export default function About() {
       >
         {/* Top Header */}
         <motion.div variants={titleVariants} className="flex flex-col gap-4 items-start">
-          <span className="section-label">WHO I AM</span>
+          <span className="section-label">ABOUT — THE SHORT VERSION</span>
           <h2 className="font-syne font-bold leading-tight tracking-tight text-ink" style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}>
-            Just a student who builds things.
+            BBA student. Builder on the side.
           </h2>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold" />
         </motion.div>
@@ -84,13 +84,13 @@ export default function About() {
             style={{ fontSize: 'clamp(16px, 1.5vw, 18px)' }}
           >
             <p className="text-ink font-medium leading-[1.6]" style={{ fontSize: 'clamp(18px, 1.8vw, 20px)' }}>
-              Doing my BBA at University of Asia Pacific, Dhaka. Currently in my second semester.
+              BBA, University of Asia Pacific, Dhaka — 2nd semester.
             </p>
             <p>
-              Outside class, I spend most of my time building products — apps, websites, tools. I don't write code myself. I describe what I need to AI in detail, it handles the technical side, and I keep directing until it works the way I imagined. That process is called vibe coding.
+              I don't hand-write code. I brief AI in detail, steer it, and keep going until the thing actually works. That's how everything on this site got built — apps, websites, tools. Lowkey, that's the whole process.
             </p>
             <p className="italic text-frost/90 border-l-2 border-border/60 pl-4 mt-2">
-              I'm genuinely interested in AI, business, tech, and where all three are heading. Still learning. Always building.
+              Into AI, business and tech — mostly where the three overlap. Still learning, still shipping.
             </p>
           </motion.div>
 
@@ -99,7 +99,7 @@ export default function About() {
             {/* Interest Chips */}
             <div className="flex flex-col gap-4">
               <span className="font-syne font-bold text-xs text-frost/70 uppercase tracking-[0.15em]">
-                Obsessions & Focus Areas
+                Into right now
               </span>
               <div className="flex flex-wrap gap-2.5">
                 {interests.map((interest) => (

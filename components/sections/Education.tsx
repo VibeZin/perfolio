@@ -47,12 +47,12 @@ export default function Education() {
           variants={titleVariants}
           className="flex flex-col gap-4 items-start max-w-2xl"
         >
-          <span className="section-label">03 / ACADEMIC JOURNEY</span>
+          <span className="section-label">03 / EDUCATION</span>
           <h2
             className="font-syne font-extrabold leading-tight tracking-tight text-ink"
             style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
           >
-            Built in the classroom. Proven on the leaderboard.
+            The paper trail.
           </h2>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold mt-1" />
         </motion.div>
@@ -91,7 +91,7 @@ export default function Education() {
                     Faculty of Business Administration, Dhaka
                   </span>
                   <p className="font-dmSans font-normal text-sm text-frost mt-3 leading-relaxed">
-                    Studying Business Administration at UAP, Dhaka. First semester result was good. Second semester result is still pending.
+                    Business Administration at UAP, Dhaka.
                   </p>
                 </div>
 
@@ -139,7 +139,7 @@ export default function Education() {
               </div>
 
               <p className="font-dmSans text-sm text-frost mt-6">
-                Received the VC's Honor List in the first semester.
+                VC's Honor List, 1st semester.
               </p>
             </SpotlightCard>
           </motion.div>

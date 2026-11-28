@@ -7,7 +7,7 @@ import Magnetic from '@/components/animations/Magnetic';
 import GlassSurface from '@/components/ui/GlassSurface';
 
 export default function Contact() {
-  const headingText = "Let's build something real.";
+  const headingText = "Got an idea? Let's ship it.";
   const words = headingText.split(" ");
 
   // Framer motion variants
@@ -98,7 +98,7 @@ export default function Contact() {
           variants={fadeUpVariants}
           className="font-dmSans font-normal text-lg text-frost leading-relaxed max-w-[500px] mx-auto"
         >
-          Got a project idea, a collab offer, or just want to talk business and tech? I read everything.
+          Project idea, collab, or just tech talk — the mail's open. I read everything.
         </motion.p>
 
         {/* Main CTA Mail Button */}
@@ -107,7 +107,7 @@ export default function Contact() {
             <a
               href="mailto:shababahmedtazin2021@gmail.com"
               className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97]"
-              aria-label="Send Me a Mail"
+              aria-label="Send a mail"
             >
               <GlassSurface
                 displace={0.6}
@@ -130,7 +130,7 @@ export default function Contact() {
 
                   {/* Button text with precision typography */}
                   <span className="font-dmSans font-semibold text-base text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
-                    Send Me a Mail
+                    Send a mail
                   </span>
 
                   {/* Precision warm micro-arrow */}
