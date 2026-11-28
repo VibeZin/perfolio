@@ -96,7 +96,7 @@ export default function Skills() {
         <motion.div variants={titleVariants} className="flex flex-col gap-4 items-start max-w-2xl">
           <span className="section-label">04 / TOOLKIT</span>
           <h2 className="font-syne font-extrabold leading-tight tracking-tight text-ink" style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}>
-            The stack behind the builds.
+            The stack behind the builds. (The robots do the typing.)
           </h2>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold mt-1" />
         </motion.div>
@@ -150,7 +150,7 @@ export default function Skills() {
         {/* Quote Block at Bottom */}
         <div className="border-l-3 border-accent pl-4 mt-12 max-w-2xl mx-auto">
           <p className="font-dmSans italic text-base text-frost leading-relaxed">
-            "No code typed by hand. Every brief written by me."
+            "No code typed by hand. Every brief written by me. The robots just do what they're told. Mostly."
           </p>
         </div>
       </motion.div>

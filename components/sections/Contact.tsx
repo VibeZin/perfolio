@@ -7,7 +7,7 @@ import Magnetic from '@/components/animations/Magnetic';
 import GlassSurface from '@/components/ui/GlassSurface';
 
 export default function Contact() {
-  const headingText = "Got an idea? Let's ship it.";
+  const headingText = "Got an idea? Cool. Mail me before I forget it exists.";
   const words = headingText.split(" ");
 
   // Framer motion variants
@@ -98,7 +98,7 @@ export default function Contact() {
           variants={fadeUpVariants}
           className="font-dmSans font-normal text-lg text-frost leading-relaxed max-w-[500px] mx-auto"
         >
-          Project idea, collab, or just tech talk — the mail's open. I read everything.
+          Project idea, collab, or just tech talk — the mail's open. I read everything. Replies take a minute. I'm a student, not a call centre.
         </motion.p>
 
         {/* Main CTA Mail Button */}

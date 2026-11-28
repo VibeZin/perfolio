@@ -26,7 +26,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: 'Shabab Ahmed',
-  description: 'BBA student at UAP Dhaka. Builds apps, websites and tools by directing AI — clear briefs in, working products out.',
+  description: "BBA student, Dhaka. I don't write code — I talk to AI until it does. Clear briefs in, working products out.",
   icons: {
     icon: [
       { url: '/favicon-dark-32x32.png?v=5', sizes: '32x32', type: 'image/png' },
