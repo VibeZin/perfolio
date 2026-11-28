@@ -48,7 +48,7 @@ export default function Footer() {
         {/* Right Column: Motto */}
         <div className="md:text-right">
           <p className="font-dmSans font-medium text-sm text-frost leading-relaxed">
-            Built with vision. Shipped with AI.
+            Briefed in Dhaka. Shipped with AI.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export default function Footer() {
       {/* Bottom Thin Row */}
       <div className="border-t border-border/10 pt-6 text-center">
         <span className="font-dmSans font-normal text-xs text-frost/40">
-          © 2025 Shabab Ahmed. All rights reserved.
+          © 2026 Shabab Ahmed. All rights reserved.
         </span>
       </div>
 

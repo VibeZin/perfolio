@@ -24,7 +24,7 @@ const projectsData: Project[] = [
     name: "Shabab er Daba",
     emoji: "♟",
     subtitle: "Chess Engine",
-    description: "A chess engine built through AI collaboration. C++ core, a small neural network, and HCE trained on chess game data. I described what I wanted — AI handled the engineering.",
+    description: "A chess engine. C++ core, a small neural net, and hand-crafted evaluation trained on real game data. You describe the move — it figures out the rest.",
     tags: ["AI Directed", "C++", "Python"],
     repoUrl: "https://github.com",
     status: "live",
@@ -35,7 +35,7 @@ const projectsData: Project[] = [
     name: "Arsalan Website",
     emoji: "🍖",
     subtitle: "Restaurant Web App",
-    description: "A website for Arsalan Nehari & Kabab Corner, a restaurant in Old Dhaka. Built as a passion project. Real menu, straightforward design.",
+    description: "The website for Arsalan Nehari & Kabab Corner, Old Dhaka. Real menu, no fuss.",
     tags: ["Next.js", "Tailwind", "Framer Motion"],
     repoUrl: "https://github.com",
     status: "live",
@@ -46,7 +46,7 @@ const projectsData: Project[] = [
     name: "Nimi Finance",
     emoji: "💰",
     subtitle: "Expenditure Tracker",
-    description: "An Android app for tracking spending and working toward financial goals. Wanted something simple that actually changes habits. Built it through AI.",
+    description: "An Android spending tracker. Simple on purpose — built to change habits, not just log them.",
     tags: ["Kotlin", "Jetpack Compose", "Room DB", "Firebase"],
     repoUrl: "https://github.com",
     status: "live",
@@ -57,7 +57,7 @@ const projectsData: Project[] = [
     name: "Zync",
     emoji: "⚡",
     subtitle: "Productivity App",
-    description: "A productivity app with tasks, a Pomodoro timer, study tracking, and notifications for pending tasks. Tried to build something I'd actually use.",
+    description: "Tasks, Pomodoro, study tracking and reminders in one app. Built for my own routine first.",
     tags: ["Android", "Kotlin", "Jetpack Compose", "Notifications"],
     repoUrl: "https://github.com",
     status: "live",
@@ -68,7 +68,7 @@ const projectsData: Project[] = [
     name: "Open Source Dialer",
     emoji: "📱",
     subtitle: "Android Dialer App",
-    description: "Google's default dialer causes some network issues. Planning an open-source replacement for Android. Still in early thinking stage.",
+    description: "A replacement for Google's default dialer, which has network issues on some phones. Early stages, open source.",
     tags: ["Android", "Kotlin", "Open Source"],
     repoUrl: "https://github.com",
     status: "planned",
@@ -79,7 +79,7 @@ const projectsData: Project[] = [
     name: "This Portfolio",
     emoji: "🌐",
     subtitle: "Portfolio Website",
-    description: "The website you're looking at. Built through AI collaboration using Next.js, Three.js, and a lot of back-and-forth conversations.",
+    description: "This site. Next.js, Three.js, and a lot of back-and-forth with AI.",
     tags: ["Next.js", "Three.js", "Framer Motion", "GSAP"],
     repoUrl: "https://github.com",
     status: "live",
@@ -243,13 +243,10 @@ export default function Projects() {
       >
         {/* Header Block */}
         <div className="flex flex-col gap-4 items-start max-w-2xl">
-          <span className="section-label">02 / WHAT I'VE BUILT</span>
+          <span className="section-label">02 / THE WORK</span>
           <h2 className="font-syne font-extrabold leading-tight tracking-tight text-ink" style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}>
-            Real products. Real code. Real results.
+            Built, shipped, used.
           </h2>
-          <p className="font-dmSans font-normal text-base md:text-lg text-frost leading-relaxed">
-            Built using modern web standards and reliable software architecture.
-          </p>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold mt-1" />
         </div>
 

@@ -142,7 +142,7 @@ export default function Hero() {
           className="font-dmSans font-normal tracking-tight text-frost text-liquid-pop"
           style={{ fontSize: 'clamp(18px, 4.2vw, 26px)' }}
         >
-          I speak to AI. It builds. We ship.
+          Clear briefs in. Working products out.
         </motion.p>
 
         {/* Sub-tagline */}
@@ -153,7 +153,7 @@ export default function Hero() {
           className="font-dmSans font-normal text-frost max-w-[520px] leading-relaxed text-liquid-pop"
           style={{ fontSize: 'clamp(14px, 3.2vw, 16px)' }}
         >
-          Turning ideas into real products — one conversation at a time.
+          BBA student, Dhaka. I build apps, websites and tools with AI — one detailed brief at a time.
         </motion.p>
 
         {/* CTA Buttons — expanded touch targets on mobile, perfectly framed & visible on desktop */}
@@ -167,7 +167,7 @@ export default function Hero() {
             <button
               onClick={() => handleScrollTo('projects')}
               className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
-              aria-label="See My Work"
+              aria-label="See the work"
             >
               <GlassSurface
                 displace={0.6}
@@ -190,7 +190,7 @@ export default function Hero() {
 
                   {/* Button text with precision typography */}
                   <span className="font-dmSans font-semibold text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
-                    See My Work
+                    See the work
                   </span>
 
                   {/* Precision warm micro-arrow */}
@@ -203,7 +203,7 @@ export default function Hero() {
             <button
               onClick={() => handleScrollTo('contact')}
               className="group relative inline-flex items-center justify-center p-0 rounded-full focus:outline-none cursor-pointer select-none transition-transform active:scale-[0.97] w-full sm:w-auto"
-              aria-label="Get in Touch"
+              aria-label="Say hi"
             >
               <GlassSurface
                 displace={0.6}
@@ -226,7 +226,7 @@ export default function Hero() {
 
                   {/* Button text with precision typography */}
                   <span className="font-dmSans font-semibold text-sm text-ink tracking-wide whitespace-nowrap transition-colors duration-200 group-hover:text-amber-400">
-                    Get in Touch
+                    Say hi
                   </span>
 
                   {/* Precision warm micro-arrow */}
