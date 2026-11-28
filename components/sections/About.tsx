@@ -70,7 +70,7 @@ export default function About() {
         <motion.div variants={titleVariants} className="flex flex-col gap-4 items-start">
           <span className="section-label">ABOUT — THE SHORT VERSION</span>
           <h2 className="font-syne font-bold leading-tight tracking-tight text-ink" style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}>
-            BBA student. Builder on the side.
+            BBA student by day. Professional AI-wrangler by... also day.
           </h2>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold" />
         </motion.div>
@@ -87,10 +87,10 @@ export default function About() {
               BBA, University of Asia Pacific, Dhaka — 2nd semester.
             </p>
             <p>
-              I don't hand-write code. I brief AI in detail, steer it, and keep going until the thing actually works. That's how everything on this site got built — apps, websites, tools. Lowkey, that's the whole process.
+              I don't write code. I write extremely detailed instructions and argue with a robot until it builds what I meant. That's the whole process. Apps, websites, tools — all of it.
             </p>
             <p className="italic text-frost/90 border-l-2 border-border/60 pl-4 mt-2">
-              Into AI, business and tech — mostly where the three overlap. Still learning, still shipping.
+              Into AI, business and tech — mostly where the three collide. Still learning. Still shipping. Still surprised it works.
             </p>
           </motion.div>
 

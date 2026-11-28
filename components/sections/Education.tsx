@@ -52,7 +52,7 @@ export default function Education() {
             className="font-syne font-extrabold leading-tight tracking-tight text-ink"
             style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
           >
-            The paper trail.
+            The paper trail. (It exists. I checked.)
           </h2>
           <div className="h-[2px] w-[60px] bg-gradient-to-r from-accent to-gold mt-1" />
         </motion.div>

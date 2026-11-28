@@ -142,7 +142,7 @@ export default function Hero() {
           className="font-dmSans font-normal tracking-tight text-frost text-liquid-pop"
           style={{ fontSize: 'clamp(18px, 4.2vw, 26px)' }}
         >
-          Clear briefs in. Working products out.
+          I don't code. I just talk to AI until it does.
         </motion.p>
 
         {/* Sub-tagline */}
@@ -153,7 +153,7 @@ export default function Hero() {
           className="font-dmSans font-normal text-frost max-w-[520px] leading-relaxed text-liquid-pop"
           style={{ fontSize: 'clamp(14px, 3.2vw, 16px)' }}
         >
-          BBA student, Dhaka. I build apps, websites and tools with AI — one detailed brief at a time.
+          BBA student, Dhaka. Apps, websites, tools — built one painfully detailed brief at a time. The AI does the typing. I do the talking.
         </motion.p>
 
         {/* CTA Buttons — expanded touch targets on mobile, perfectly framed & visible on desktop */}
